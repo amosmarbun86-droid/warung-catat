@@ -267,7 +267,7 @@
         btn.disabled = false;
       })
       .catch((err) => {
-        tampilPesan('pesanDaftar', terjemahError(err.code), 'error');
+        tampilPesan('pesanDaftar', terjemahError(err.code) + ' [' + err.code + ': ' + err.message + ']', 'error');
         btn.disabled = false;
       });
   }
@@ -301,7 +301,7 @@
         btn.disabled = false;
       })
       .catch((err) => {
-        tampilPesan('pesanMasuk', terjemahError(err.code), 'error');
+        tampilPesan('pesanMasuk', terjemahError(err.code) + ' [' + err.code + ': ' + err.message + ']', 'error');
         btn.disabled = false;
       });
   }
