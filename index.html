@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Warung Catat — Login</title>
+<title>Warung Catat</title>
 <style>
   :root{
     --nasi: #F6EFE2;
@@ -20,10 +20,11 @@
     background: var(--nasi);
     color: var(--arang);
     min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     padding:24px;
+  }
+  .bungkus{
+    display:flex;
+    justify-content:center;
   }
   .kartu{
     width:100%;
@@ -34,6 +35,7 @@
     padding:36px 32px;
     position:relative;
   }
+  .kartu.lebar{ max-width:480px; }
   .kartu::before{
     content:"";
     position:absolute;
@@ -48,11 +50,17 @@
     font-weight:normal;
     letter-spacing:0.3px;
   }
+  h2{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:15px;
+    color: var(--daun-tua);
+    margin:26px 0 10px;
+  }
   .sub{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size:13.5px;
     color:#6b6357;
-    margin:0 0 28px;
+    margin:0 0 20px;
     line-height:1.5;
   }
   .tab{
@@ -123,7 +131,7 @@
   }
   button.aksi{
     width:100%;
-    margin-top:26px;
+    margin-top:20px;
     padding:12px;
     background: var(--sambal);
     color:#fff;
@@ -138,6 +146,17 @@
   button.aksi:disabled{
     opacity:0.6;
     cursor:default;
+  }
+  button.sekunder{
+    background:#fff;
+    color: var(--daun-tua);
+    border:1px solid var(--garis);
+  }
+  button.kecil{
+    width:auto;
+    margin-top:0;
+    padding:6px 12px;
+    font-size:12.5px;
   }
   .pesan{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -159,45 +178,230 @@
   }
   .layar{display:none;}
   .layar.aktif{display:block;}
+
+  /* Header dashboard */
+  .header-dasbor{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:6px;
+  }
+  .header-teks .nama{
+    font-weight:600;
+    color: var(--daun-tua);
+    font-size:15px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .header-teks .peran{
+    font-size:12px;
+    color:#8a8171;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Ringkasan */
+  .ringkasan{
+    background:#FCFAF5;
+    border:1px solid var(--garis);
+    border-radius:2px;
+    padding:16px;
+    margin-top:18px;
+    text-align:center;
+  }
+  .ringkasan .angka{
+    font-size:26px;
+    color: var(--sambal);
+    font-weight:600;
+  }
+  .ringkasan .label{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:12px;
+    color:#8a8171;
+    margin-top:2px;
+  }
+
+  /* Form tambah transaksi */
+  .baris-form{
+    display:flex;
+    gap:8px;
+  }
+  .baris-form > div{ flex:1; }
+
+  /* Daftar transaksi */
+  .daftar-transaksi{
+    margin-top:6px;
+    border-top:1px solid var(--garis);
+  }
+  .item-transaksi{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px 0;
+    border-bottom:1px solid var(--garis);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .item-transaksi .info .nama-pengutang{
+    font-size:13.5px;
+    color: var(--daun-tua);
+    font-weight:600;
+  }
+  .item-transaksi .info .rincian{
+    font-size:12.5px;
+    color:#8a8171;
+    margin-top:2px;
+  }
+  .item-transaksi .kanan{
+    text-align:right;
+    flex-shrink:0;
+  }
+  .item-transaksi .harga{
+    font-size:13.5px;
+    color: var(--arang);
+    font-weight:600;
+  }
+  .badge{
+    display:inline-block;
+    margin-top:4px;
+    padding:2px 8px;
+    border-radius:10px;
+    font-size:11px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .badge.belum{
+    background:#FBEAE6;
+    color:#8C3419;
+  }
+  .badge.lunas{
+    background:#EDF2EA;
+    color: var(--daun-tua);
+  }
+  .kosong{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:13px;
+    color:#a39a89;
+    text-align:center;
+    padding:24px 0;
+  }
+  .muat{
+    text-align:center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:13.5px;
+    color:#8a8171;
+  }
 </style>
 </head>
 <body>
+<div class="bungkus">
+<div class="kartu" id="kartuUtama">
 
-<div class="kartu">
-  <h1>Warung Catat</h1>
-  <p class="sub">Catatan pesanan harian &amp; utang makanan di warung nasi.</p>
-
-  <div class="tab">
-    <button id="tabMasuk" class="aktif" onclick="gantiTab('masuk')">Masuk</button>
-    <button id="tabDaftar" onclick="gantiTab('daftar')">Daftar</button>
+  <!-- LAYAR MUAT -->
+  <div id="layarMuat" class="layar aktif">
+    <h1>Warung Catat</h1>
+    <p class="muat">Memeriksa sesi masuk…</p>
   </div>
 
-  <!-- LOGIN -->
-  <div id="layarMasuk" class="layar aktif">
-    <label>Email</label>
-    <input type="email" id="masukEmail" placeholder="nama@email.com">
-    <label>Kata sandi</label>
-    <input type="password" id="masukSandi" placeholder="••••••••">
-    <button class="aksi" id="btnMasuk" onclick="masuk()">Masuk</button>
-    <div class="pesan" id="pesanMasuk"></div>
-  </div>
+  <!-- LAYAR AUTENTIKASI -->
+  <div id="layarAuth" class="layar">
+    <h1>Warung Catat</h1>
+    <p class="sub">Catatan pesanan harian &amp; utang makanan di warung nasi.</p>
 
-  <!-- REGISTER -->
-  <div id="layarDaftar" class="layar">
-    <label>Nama</label>
-    <input type="text" id="daftarNama" placeholder="Nama lengkap">
-    <label>Email</label>
-    <input type="email" id="daftarEmail" placeholder="nama@email.com">
-    <label>Kata sandi</label>
-    <input type="password" id="daftarSandi" placeholder="Minimal 6 karakter">
-    <label>Daftar sebagai</label>
-    <div class="role-pilih">
-      <div class="role-opsi pilih" id="opsiPengutang" onclick="pilihRole('pengutang')">Pengutang<br><span style="font-size:11px;opacity:.75">(pengambil makanan)</span></div>
-      <div class="role-opsi" id="opsiPemberi" onclick="pilihRole('pemberi')">Pemberi utang<br><span style="font-size:11px;opacity:.75">(pemilik warung)</span></div>
+    <div class="tab">
+      <button id="tabMasuk" class="aktif" onclick="gantiTab('masuk')">Masuk</button>
+      <button id="tabDaftar" onclick="gantiTab('daftar')">Daftar</button>
     </div>
-    <button class="aksi" id="btnDaftar" onclick="daftar()">Daftar</button>
-    <div class="pesan" id="pesanDaftar"></div>
+
+    <div id="layarMasuk" class="layar aktif">
+      <label>Email</label>
+      <input type="email" id="masukEmail" placeholder="nama@email.com" autocomplete="username">
+      <label>Kata sandi</label>
+      <input type="password" id="masukSandi" placeholder="••••••••" autocomplete="current-password">
+      <button class="aksi" id="btnMasuk" onclick="masuk()">Masuk</button>
+      <div class="pesan" id="pesanMasuk"></div>
+    </div>
+
+    <div id="layarDaftar" class="layar">
+      <label>Nama</label>
+      <input type="text" id="daftarNama" placeholder="Nama lengkap">
+      <label>Email</label>
+      <input type="email" id="daftarEmail" placeholder="nama@email.com" autocomplete="username">
+      <label>Kata sandi</label>
+      <input type="password" id="daftarSandi" placeholder="Minimal 6 karakter" autocomplete="new-password">
+      <label>Ulangi kata sandi</label>
+      <input type="password" id="daftarSandiUlang" placeholder="Ulangi kata sandi" autocomplete="new-password">
+      <label>Daftar sebagai</label>
+      <div class="role-pilih">
+        <div class="role-opsi pilih" id="opsiPengutang" onclick="pilihRole('pengutang')">Pengutang<br><span style="font-size:11px;opacity:.75">(pengambil makanan)</span></div>
+        <div class="role-opsi" id="opsiPemberi" onclick="pilihRole('pemberi')">Pemberi utang<br><span style="font-size:11px;opacity:.75">(pemilik warung)</span></div>
+      </div>
+      <button class="aksi" id="btnDaftar" onclick="daftar()">Daftar</button>
+      <div class="pesan" id="pesanDaftar"></div>
+    </div>
   </div>
+
+  <!-- DASHBOARD PEMBERI UTANG -->
+  <div id="layarPemberi" class="layar">
+    <div class="header-dasbor">
+      <div class="header-teks">
+        <div class="nama" id="pemberiNama">—</div>
+        <div class="peran">Pemberi utang</div>
+      </div>
+      <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
+    </div>
+
+    <div class="ringkasan">
+      <div class="angka" id="pemberiTotalUtang">Rp0</div>
+      <div class="label">Total utang belum lunas</div>
+    </div>
+
+    <h2>Catat utang baru</h2>
+    <label>Pengutang</label>
+    <select id="pemberiPilihPengutang">
+      <option value="">Memuat daftar pengutang…</option>
+    </select>
+    <div class="baris-form">
+      <div>
+        <label>Item</label>
+        <input type="text" id="pemberiItem" placeholder="Nasi ayam">
+      </div>
+      <div>
+        <label>Harga (Rp)</label>
+        <input type="number" id="pemberiHarga" placeholder="15000" min="0">
+      </div>
+    </div>
+    <button class="aksi" id="btnTambahTransaksi" onclick="tambahTransaksi()">Tambah catatan</button>
+    <div class="pesan" id="pesanPemberiForm"></div>
+
+    <h2>Riwayat catatan</h2>
+    <div class="daftar-transaksi" id="pemberiDaftar">
+      <div class="kosong">Memuat…</div>
+    </div>
+    <div class="pesan" id="pesanPemberi"></div>
+  </div>
+
+  <!-- DASHBOARD PENGUTANG -->
+  <div id="layarPengutang" class="layar">
+    <div class="header-dasbor">
+      <div class="header-teks">
+        <div class="nama" id="pengutangNama">—</div>
+        <div class="peran">Pengutang</div>
+      </div>
+      <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
+    </div>
+
+    <div class="ringkasan">
+      <div class="angka" id="pengutangTotalUtang">Rp0</div>
+      <div class="label">Total utang belum lunas</div>
+    </div>
+
+    <h2>Riwayat pesanan</h2>
+    <div class="daftar-transaksi" id="pengutangDaftar">
+      <div class="kosong">Memuat…</div>
+    </div>
+    <div class="pesan" id="pesanPengutang"></div>
+  </div>
+
+</div>
 </div>
 
 <!-- Firebase -->
@@ -206,7 +410,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
   // GANTI dengan config Firebase project kamu sendiri
-  // (Firebase console > Project settings > Your apps > SDK setup and configuration)
   const firebaseConfig = {
     apiKey: "AIzaSyDxPsLOTKRmlAI0x-lyeRYEMnilwV4JCh4",
     authDomain: "warung-catat.firebaseapp.com",
@@ -220,6 +423,23 @@
   const db = firebase.firestore();
 
   let roleTerpilih = 'pengutang';
+  let lepasListenerTransaksi = null; // untuk melepas onSnapshot saat logout
+
+  const labelPeran = {
+    pengutang: 'Pengutang (pengambil makanan)',
+    pemberi: 'Pemberi utang (pemilik warung)'
+  };
+
+  // ---------- Util ----------
+  function formatRupiah(angka){
+    return 'Rp' + Number(angka || 0).toLocaleString('id-ID');
+  }
+
+  function tampilkanLayar(nama){
+    document.querySelectorAll('.layar').forEach(el => el.classList.remove('aktif'));
+    document.getElementById(nama).classList.add('aktif');
+    document.getElementById('kartuUtama').classList.toggle('lebar', nama === 'layarPemberi' || nama === 'layarPengutang');
+  }
 
   function gantiTab(nama){
     document.getElementById('tabMasuk').classList.toggle('aktif', nama==='masuk');
@@ -240,18 +460,31 @@
     el.className = 'pesan ' + tipe;
   }
 
+  function sembunyikanPesan(id){
+    const el = document.getElementById(id);
+    el.className = 'pesan';
+    el.textContent = '';
+  }
+
+  // ---------- Daftar ----------
   function daftar(){
     const nama = document.getElementById('daftarNama').value.trim();
     const email = document.getElementById('daftarEmail').value.trim();
     const sandi = document.getElementById('daftarSandi').value;
+    const sandiUlang = document.getElementById('daftarSandiUlang').value;
     const btn = document.getElementById('btnDaftar');
 
     if(!nama || !email || sandi.length < 6){
       tampilPesan('pesanDaftar', 'Isi semua kolom. Kata sandi minimal 6 karakter.', 'error');
       return;
     }
+    if(sandi !== sandiUlang){
+      tampilPesan('pesanDaftar', 'Kata sandi dan ulangi kata sandi tidak sama.', 'error');
+      return;
+    }
 
     btn.disabled = true;
+    btn.textContent = 'Memproses…';
     auth.createUserWithEmailAndPassword(email, sandi)
       .then((cred) => {
         return db.collection('pengguna').doc(cred.user.uid).set({
@@ -263,15 +496,22 @@
       })
       .then(() => {
         tampilPesan('pesanDaftar', 'Akun berhasil dibuat. Silakan masuk.', 'sukses');
+        document.getElementById('daftarNama').value = '';
+        document.getElementById('daftarEmail').value = '';
+        document.getElementById('daftarSandi').value = '';
+        document.getElementById('daftarSandiUlang').value = '';
         gantiTab('masuk');
         btn.disabled = false;
+        btn.textContent = 'Daftar';
       })
       .catch((err) => {
-        tampilPesan('pesanDaftar', terjemahError(err.code) + ' [' + err.code + ': ' + err.message + ']', 'error');
+        tampilPesan('pesanDaftar', terjemahError(err.code), 'error');
         btn.disabled = false;
+        btn.textContent = 'Daftar';
       });
   }
 
+  // ---------- Masuk ----------
   function masuk(){
     const email = document.getElementById('masukEmail').value.trim();
     const sandi = document.getElementById('masukSandi').value;
@@ -283,29 +523,236 @@
     }
 
     btn.disabled = true;
+    btn.textContent = 'Memproses…';
     auth.signInWithEmailAndPassword(email, sandi)
-      .then((cred) => {
-        return db.collection('pengguna').doc(cred.user.uid).get();
+      .catch((err) => {
+        tampilPesan('pesanMasuk', terjemahError(err.code), 'error');
+        btn.disabled = false;
+        btn.textContent = 'Masuk';
+        throw err;
       })
-      .then((doc) => {
-        if(!doc.exists){
-          tampilPesan('pesanMasuk', 'Data pengguna tidak ditemukan.', 'error');
-          btn.disabled = false;
+      .then(() => {
+        btn.disabled = false;
+        btn.textContent = 'Masuk';
+      })
+      .catch(() => { /* sudah ditangani */ });
+  }
+
+  // ---------- Keluar ----------
+  function keluar(){
+    if(lepasListenerTransaksi){
+      lepasListenerTransaksi();
+      lepasListenerTransaksi = null;
+    }
+    auth.signOut().then(() => {
+      document.getElementById('masukEmail').value = '';
+      document.getElementById('masukSandi').value = '';
+    });
+  }
+
+  // ---------- Dashboard Pemberi utang ----------
+  function muatDaftarPengutangUntukPemberi(){
+    const select = document.getElementById('pemberiPilihPengutang');
+    db.collection('pengguna').where('role', '==', 'pengutang').get()
+      .then((snap) => {
+        if(snap.empty){
+          select.innerHTML = '<option value="">Belum ada pengutang terdaftar</option>';
           return;
         }
-        const data = doc.data();
-        // Langkah selanjutnya: arahkan ke dashboard sesuai role
-        // role === 'pemberi'  -> dashboard-pemberi.html
-        // role === 'pengutang' -> dashboard-pengutang.html
-        tampilPesan('pesanMasuk', 'Berhasil masuk sebagai ' + data.nama + ' (' + data.role + ').', 'sukses');
-        btn.disabled = false;
+        select.innerHTML = '';
+        snap.forEach((doc) => {
+          const data = doc.data();
+          const opt = document.createElement('option');
+          opt.value = doc.id;
+          opt.textContent = data.nama;
+          opt.dataset.nama = data.nama;
+          select.appendChild(opt);
+        });
       })
       .catch((err) => {
-        tampilPesan('pesanMasuk', terjemahError(err.code) + ' [' + err.code + ': ' + err.message + ']', 'error');
-        btn.disabled = false;
+        select.innerHTML = '<option value="">Gagal memuat daftar</option>';
+        tampilPesan('pesanPemberiForm', terjemahError(err.code), 'error');
       });
   }
 
+  function tambahTransaksi(){
+    const select = document.getElementById('pemberiPilihPengutang');
+    const pengutangId = select.value;
+    const pengutangNama = select.options[select.selectedIndex] ? select.options[select.selectedIndex].dataset.nama : '';
+    const item = document.getElementById('pemberiItem').value.trim();
+    const harga = Number(document.getElementById('pemberiHarga').value);
+    const btn = document.getElementById('btnTambahTransaksi');
+
+    if(!pengutangId || !item || !harga || harga <= 0){
+      tampilPesan('pesanPemberiForm', 'Pilih pengutang, isi item, dan harga yang valid.', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan…';
+    db.collection('transaksi').add({
+      pengutangId: pengutangId,
+      pengutangNama: pengutangNama,
+      item: item,
+      harga: harga,
+      status: 'belum',
+      dibuatOleh: auth.currentUser.uid,
+      tanggal: firebase.firestore.FieldValue.serverTimestamp()
+    })
+      .then(() => {
+        document.getElementById('pemberiItem').value = '';
+        document.getElementById('pemberiHarga').value = '';
+        sembunyikanPesan('pesanPemberiForm');
+        btn.disabled = false;
+        btn.textContent = 'Tambah catatan';
+      })
+      .catch((err) => {
+        tampilPesan('pesanPemberiForm', terjemahError(err.code), 'error');
+        btn.disabled = false;
+        btn.textContent = 'Tambah catatan';
+      });
+  }
+
+  function tandaiLunas(transaksiId){
+    db.collection('transaksi').doc(transaksiId).update({ status: 'lunas' })
+      .catch((err) => {
+        tampilPesan('pesanPemberi', terjemahError(err.code), 'error');
+      });
+  }
+
+  function pantauTransaksiPemberi(uid){
+    const daftarEl = document.getElementById('pemberiDaftar');
+    const totalEl = document.getElementById('pemberiTotalUtang');
+
+    return db.collection('transaksi')
+      .where('dibuatOleh', '==', uid)
+      .orderBy('tanggal', 'desc')
+      .onSnapshot((snap) => {
+        if(snap.empty){
+          daftarEl.innerHTML = '<div class="kosong">Belum ada catatan.</div>';
+          totalEl.textContent = formatRupiah(0);
+          return;
+        }
+        let total = 0;
+        let html = '';
+        snap.forEach((doc) => {
+          const d = doc.data();
+          if(d.status === 'belum') total += Number(d.harga || 0);
+          html += `
+            <div class="item-transaksi">
+              <div class="info">
+                <div class="nama-pengutang">${escapeHtml(d.pengutangNama)}</div>
+                <div class="rincian">${escapeHtml(d.item)}</div>
+              </div>
+              <div class="kanan">
+                <div class="harga">${formatRupiah(d.harga)}</div>
+                ${d.status === 'lunas'
+                  ? '<span class="badge lunas">Lunas</span>'
+                  : `<span class="badge belum">Belum lunas</span><br><button class="aksi kecil" style="margin-top:6px" onclick="tandaiLunas('${doc.id}')">Tandai lunas</button>`}
+              </div>
+            </div>`;
+        });
+        daftarEl.innerHTML = html;
+        totalEl.textContent = formatRupiah(total);
+      }, (err) => {
+        tampilPesan('pesanPemberi', terjemahError(err.code), 'error');
+      });
+  }
+
+  // ---------- Dashboard Pengutang ----------
+  function pantauTransaksiPengutang(uid){
+    const daftarEl = document.getElementById('pengutangDaftar');
+    const totalEl = document.getElementById('pengutangTotalUtang');
+
+    return db.collection('transaksi')
+      .where('pengutangId', '==', uid)
+      .orderBy('tanggal', 'desc')
+      .onSnapshot((snap) => {
+        if(snap.empty){
+          daftarEl.innerHTML = '<div class="kosong">Belum ada catatan pesanan.</div>';
+          totalEl.textContent = formatRupiah(0);
+          return;
+        }
+        let total = 0;
+        let html = '';
+        snap.forEach((doc) => {
+          const d = doc.data();
+          if(d.status === 'belum') total += Number(d.harga || 0);
+          html += `
+            <div class="item-transaksi">
+              <div class="info">
+                <div class="nama-pengutang">${escapeHtml(d.item)}</div>
+              </div>
+              <div class="kanan">
+                <div class="harga">${formatRupiah(d.harga)}</div>
+                <span class="badge ${d.status === 'lunas' ? 'lunas' : 'belum'}">${d.status === 'lunas' ? 'Lunas' : 'Belum lunas'}</span>
+              </div>
+            </div>`;
+        });
+        daftarEl.innerHTML = html;
+        totalEl.textContent = formatRupiah(total);
+      }, (err) => {
+        tampilPesan('pesanPengutang', terjemahError(err.code), 'error');
+      });
+  }
+
+  function escapeHtml(teks){
+    const div = document.createElement('div');
+    div.textContent = teks == null ? '' : teks;
+    return div.innerHTML;
+  }
+
+  // ---------- Pantau status login & routing peran ----------
+  auth.onAuthStateChanged((user) => {
+    if(lepasListenerTransaksi){
+      lepasListenerTransaksi();
+      lepasListenerTransaksi = null;
+    }
+
+    if(user){
+      db.collection('pengguna').doc(user.uid).get()
+        .then((doc) => {
+          if(!doc.exists){
+            tampilPesan('pesanMasuk', 'Data pengguna tidak ditemukan. Hubungi pemilik warung.', 'error');
+            tampilkanLayar('layarAuth');
+            return;
+          }
+          const data = doc.data();
+          if(data.role === 'pemberi'){
+            document.getElementById('pemberiNama').textContent = data.nama;
+            tampilkanLayar('layarPemberi');
+            muatDaftarPengutangUntukPemberi();
+            lepasListenerTransaksi = pantauTransaksiPemberi(user.uid);
+          } else {
+            document.getElementById('pengutangNama').textContent = data.nama;
+            tampilkanLayar('layarPengutang');
+            lepasListenerTransaksi = pantauTransaksiPengutang(user.uid);
+          }
+        })
+        .catch((err) => {
+          tampilPesan('pesanMasuk', terjemahError(err.code), 'error');
+          tampilkanLayar('layarAuth');
+        });
+    } else {
+      tampilkanLayar('layarAuth');
+    }
+  });
+
+  // ---------- Submit dengan tombol Enter ----------
+  document.getElementById('masukSandi').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') masuk();
+  });
+  document.getElementById('masukEmail').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') masuk();
+  });
+  document.getElementById('daftarSandiUlang').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') daftar();
+  });
+  document.getElementById('pemberiHarga').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') tambahTransaksi();
+  });
+
+  // ---------- Terjemahan pesan error Firebase ----------
   function terjemahError(kode){
     const peta = {
       'auth/email-already-in-use': 'Email sudah terdaftar.',
@@ -313,7 +760,10 @@
       'auth/weak-password': 'Kata sandi terlalu lemah.',
       'auth/user-not-found': 'Email belum terdaftar.',
       'auth/wrong-password': 'Kata sandi salah.',
-      'auth/invalid-credential': 'Email atau kata sandi salah.'
+      'auth/invalid-credential': 'Email atau kata sandi salah.',
+      'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.',
+      'auth/network-request-failed': 'Koneksi bermasalah. Periksa internet kamu.',
+      'permission-denied': 'Tidak punya izin akses data. Periksa aturan keamanan Firestore.'
     };
     return peta[kode] || 'Terjadi kesalahan. Coba lagi.';
   }
