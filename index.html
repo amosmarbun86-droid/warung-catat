@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warung Catat — Login</title>
+<style>
+  :root{
+    --nasi: #F6EFE2;
+    --daun: #3E5C3A;
+    --daun-tua: #2A3F27;
+    --sambal: #C6472B;
+    --arang: #241E18;
+    --garis: #D8C9A8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--nasi);
+    color: var(--arang);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .kartu{
+    width:100%;
+    max-width:380px;
+    background:#fff;
+    border:1px solid var(--garis);
+    border-radius:2px;
+    padding:36px 32px;
+    position:relative;
+  }
+  .kartu::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:6px;
+    background: var(--daun);
+  }
+  h1{
+    font-size:26px;
+    margin:0 0 4px;
+    color: var(--daun-tua);
+    font-weight:normal;
+    letter-spacing:0.3px;
+  }
+  .sub{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:13.5px;
+    color:#6b6357;
+    margin:0 0 28px;
+    line-height:1.5;
+  }
+  .tab{
+    display:flex;
+    border-bottom:1px solid var(--garis);
+    margin-bottom:22px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .tab button{
+    flex:1;
+    background:none;
+    border:none;
+    padding:10px 0;
+    font-size:14px;
+    color:#a39a89;
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .tab button.aktif{
+    color: var(--daun-tua);
+    border-bottom-color: var(--sambal);
+    font-weight:600;
+  }
+  label{
+    display:block;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:12.5px;
+    color:#8a8171;
+    margin:16px 0 5px;
+  }
+  input, select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--garis);
+    border-radius:2px;
+    font-size:14.5px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background:#FCFAF5;
+    color: var(--arang);
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color: var(--daun);
+  }
+  .role-pilih{
+    display:flex;
+    gap:8px;
+    margin-top:6px;
+  }
+  .role-opsi{
+    flex:1;
+    text-align:center;
+    padding:10px 6px;
+    border:1px solid var(--garis);
+    border-radius:2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    color:#6b6357;
+    background:#FCFAF5;
+  }
+  .role-opsi.pilih{
+    border-color: var(--daun);
+    background: #EDF2EA;
+    color: var(--daun-tua);
+    font-weight:600;
+  }
+  button.aksi{
+    width:100%;
+    margin-top:26px;
+    padding:12px;
+    background: var(--sambal);
+    color:#fff;
+    border:none;
+    border-radius:2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    cursor:pointer;
+    letter-spacing:0.2px;
+  }
+  button.aksi:disabled{
+    opacity:0.6;
+    cursor:default;
+  }
+  .pesan{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:13px;
+    margin-top:14px;
+    padding:10px 12px;
+    border-radius:2px;
+    display:none;
+  }
+  .pesan.error{
+    display:block;
+    background:#FBEAE6;
+    color:#8C3419;
+  }
+  .pesan.sukses{
+    display:block;
+    background:#EDF2EA;
+    color: var(--daun-tua);
+  }
+  .layar{display:none;}
+  .layar.aktif{display:block;}
+</style>
+</head>
+<body>
+
+<div class="kartu">
+  <h1>Warung Catat</h1>
+  <p class="sub">Catatan pesanan harian &amp; utang makanan di warung nasi.</p>
+
+  <div class="tab">
+    <button id="tabMasuk" class="aktif" onclick="gantiTab('masuk')">Masuk</button>
+    <button id="tabDaftar" onclick="gantiTab('daftar')">Daftar</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="layarMasuk" class="layar aktif">
+    <label>Email</label>
+    <input type="email" id="masukEmail" placeholder="nama@email.com">
+    <label>Kata sandi</label>
+    <input type="password" id="masukSandi" placeholder="••••••••">
+    <button class="aksi" id="btnMasuk" onclick="masuk()">Masuk</button>
+    <div class="pesan" id="pesanMasuk"></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="layarDaftar" class="layar">
+    <label>Nama</label>
+    <input type="text" id="daftarNama" placeholder="Nama lengkap">
+    <label>Email</label>
+    <input type="email" id="daftarEmail" placeholder="nama@email.com">
+    <label>Kata sandi</label>
+    <input type="password" id="daftarSandi" placeholder="Minimal 6 karakter">
+    <label>Daftar sebagai</label>
+    <div class="role-pilih">
+      <div class="role-opsi pilih" id="opsiPengutang" onclick="pilihRole('pengutang')">Pengutang<br><span style="font-size:11px;opacity:.75">(pengambil makanan)</span></div>
+      <div class="role-opsi" id="opsiPemberi" onclick="pilihRole('pemberi')">Pemberi utang<br><span style="font-size:11px;opacity:.75">(pemilik warung)</span></div>
+    </div>
+    <button class="aksi" id="btnDaftar" onclick="daftar()">Daftar</button>
+    <div class="pesan" id="pesanDaftar"></div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  // GANTI dengan config Firebase project kamu sendiri
+  // (Firebase console > Project settings > Your apps > SDK setup and configuration)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDxPsLOTKRmlAI0x-lyeRYEMniIwV4JCh4",
+    authDomain: "warung-catat.firebaseapp.com",
+    projectId: "warung-catat",
+    storageBucket: "warung-catat.firebasestorage.app",
+    messagingSenderId: "949268378551",
+    appId: "1:949268378551:web:32fa3ce27d3ea9f19c6e32"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  let roleTerpilih = 'pengutang';
+
+  function gantiTab(nama){
+    document.getElementById('tabMasuk').classList.toggle('aktif', nama==='masuk');
+    document.getElementById('tabDaftar').classList.toggle('aktif', nama==='daftar');
+    document.getElementById('layarMasuk').classList.toggle('aktif', nama==='masuk');
+    document.getElementById('layarDaftar').classList.toggle('aktif', nama==='daftar');
+  }
+
+  function pilihRole(role){
+    roleTerpilih = role;
+    document.getElementById('opsiPengutang').classList.toggle('pilih', role==='pengutang');
+    document.getElementById('opsiPemberi').classList.toggle('pilih', role==='pemberi');
+  }
+
+  function tampilPesan(id, teks, tipe){
+    const el = document.getElementById(id);
+    el.textContent = teks;
+    el.className = 'pesan ' + tipe;
+  }
+
+  function daftar(){
+    const nama = document.getElementById('daftarNama').value.trim();
+    const email = document.getElementById('daftarEmail').value.trim();
+    const sandi = document.getElementById('daftarSandi').value;
+    const btn = document.getElementById('btnDaftar');
+
+    if(!nama || !email || sandi.length < 6){
+      tampilPesan('pesanDaftar', 'Isi semua kolom. Kata sandi minimal 6 karakter.', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    auth.createUserWithEmailAndPassword(email, sandi)
+      .then((cred) => {
+        return db.collection('pengguna').doc(cred.user.uid).set({
+          nama: nama,
+          email: email,
+          role: roleTerpilih,
+          dibuat: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      })
+      .then(() => {
+        tampilPesan('pesanDaftar', 'Akun berhasil dibuat. Silakan masuk.', 'sukses');
+        gantiTab('masuk');
+        btn.disabled = false;
+      })
+      .catch((err) => {
+        tampilPesan('pesanDaftar', terjemahError(err.code), 'error');
+        btn.disabled = false;
+      });
+  }
+
+  function masuk(){
+    const email = document.getElementById('masukEmail').value.trim();
+    const sandi = document.getElementById('masukSandi').value;
+    const btn = document.getElementById('btnMasuk');
+
+    if(!email || !sandi){
+      tampilPesan('pesanMasuk', 'Isi email dan kata sandi.', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    auth.signInWithEmailAndPassword(email, sandi)
+      .then((cred) => {
+        return db.collection('pengguna').doc(cred.user.uid).get();
+      })
+      .then((doc) => {
+        if(!doc.exists){
+          tampilPesan('pesanMasuk', 'Data pengguna tidak ditemukan.', 'error');
+          btn.disabled = false;
+          return;
+        }
+        const data = doc.data();
+        // Langkah selanjutnya: arahkan ke dashboard sesuai role
+        // role === 'pemberi'  -> dashboard-pemberi.html
+        // role === 'pengutang' -> dashboard-pengutang.html
+        tampilPesan('pesanMasuk', 'Berhasil masuk sebagai ' + data.nama + ' (' + data.role + ').', 'sukses');
+        btn.disabled = false;
+      })
+      .catch((err) => {
+        tampilPesan('pesanMasuk', terjemahError(err.code), 'error');
+        btn.disabled = false;
+      });
+  }
+
+  function terjemahError(kode){
+    const peta = {
+      'auth/email-already-in-use': 'Email sudah terdaftar.',
+      'auth/invalid-email': 'Format email tidak valid.',
+      'auth/weak-password': 'Kata sandi terlalu lemah.',
+      'auth/user-not-found': 'Email belum terdaftar.',
+      'auth/wrong-password': 'Kata sandi salah.',
+      'auth/invalid-credential': 'Email atau kata sandi salah.'
+    };
+    return peta[kode] || 'Terjadi kesalahan. Coba lagi.';
+  }
+</script>
+</body>
+</html>
