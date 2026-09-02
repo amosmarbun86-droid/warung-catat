@@ -22,10 +22,7 @@
     min-height:100vh;
     padding:24px;
   }
-  .bungkus{
-    display:flex;
-    justify-content:center;
-  }
+  .bungkus{ display:flex; justify-content:center; }
   .kartu{
     width:100%;
     max-width:380px;
@@ -78,7 +75,6 @@
     color:#a39a89;
     cursor:pointer;
     border-bottom:2px solid transparent;
-    transition: color .15s, border-color .15s;
   }
   .tab button.aktif{
     color: var(--daun-tua);
@@ -102,15 +98,8 @@
     background:#FCFAF5;
     color: var(--arang);
   }
-  input:focus, select:focus{
-    outline:none;
-    border-color: var(--daun);
-  }
-  .role-pilih{
-    display:flex;
-    gap:8px;
-    margin-top:6px;
-  }
+  input:focus, select:focus{ outline:none; border-color: var(--daun); }
+  .role-pilih{ display:flex; gap:8px; margin-top:6px; }
   .role-opsi{
     flex:1;
     text-align:center;
@@ -141,23 +130,10 @@
     font-size:14.5px;
     font-weight:600;
     cursor:pointer;
-    letter-spacing:0.2px;
   }
-  button.aksi:disabled{
-    opacity:0.6;
-    cursor:default;
-  }
-  button.sekunder{
-    background:#fff;
-    color: var(--daun-tua);
-    border:1px solid var(--garis);
-  }
-  button.kecil{
-    width:auto;
-    margin-top:0;
-    padding:6px 12px;
-    font-size:12.5px;
-  }
+  button.aksi:disabled{ opacity:0.6; cursor:default; }
+  button.sekunder{ background:#fff; color: var(--daun-tua); border:1px solid var(--garis); }
+  button.kecil{ width:auto; margin-top:0; padding:6px 12px; font-size:12.5px; }
   .pesan{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size:13px;
@@ -166,128 +142,71 @@
     border-radius:2px;
     display:none;
   }
-  .pesan.error{
-    display:block;
-    background:#FBEAE6;
-    color:#8C3419;
-  }
-  .pesan.sukses{
-    display:block;
-    background:#EDF2EA;
-    color: var(--daun-tua);
-  }
+  .pesan.error{ display:block; background:#FBEAE6; color:#8C3419; }
+  .pesan.sukses{ display:block; background:#EDF2EA; color: var(--daun-tua); }
   .layar{display:none;}
   .layar.aktif{display:block;}
 
-  /* Header dashboard */
   .header-dasbor{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:6px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; margin-bottom:6px;
   }
   .header-teks .nama{
-    font-weight:600;
-    color: var(--daun-tua);
-    font-size:15px;
+    font-weight:600; color: var(--daun-tua); font-size:15px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   .header-teks .peran{
-    font-size:12px;
-    color:#8a8171;
+    font-size:12px; color:#8a8171;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
-  /* Ringkasan */
-  .ringkasan{
-    background:#FCFAF5;
-    border:1px solid var(--garis);
-    border-radius:2px;
-    padding:16px;
-    margin-top:18px;
-    text-align:center;
+  .rekap-grid{ display:flex; gap:10px; margin-top:18px; }
+  .rekap-kotak{
+    flex:1; text-align:center; padding:14px 8px;
+    background:#FCFAF5; border:1px solid var(--garis); border-radius:2px;
   }
-  .ringkasan .angka{
-    font-size:26px;
-    color: var(--sambal);
-    font-weight:600;
-  }
-  .ringkasan .label{
+  .rekap-kotak .angka{ font-size:22px; color: var(--daun-tua); }
+  .rekap-kotak.merah .angka{ color: var(--sambal); }
+  .rekap-kotak .label{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size:12px;
-    color:#8a8171;
-    margin-top:2px;
+    font-size:11.5px; color:#8a8171; margin-top:2px;
   }
 
-  /* Form tambah transaksi */
-  .baris-form{
-    display:flex;
-    gap:8px;
-  }
+  .baris-form{ display:flex; gap:8px; }
   .baris-form > div{ flex:1; }
+  .status-pilih{ display:flex; gap:8px; margin-top:6px; }
+  .status-opsi{
+    flex:1; text-align:center; padding:9px 6px;
+    border:1px solid var(--garis); border-radius:2px; font-size:13px;
+    cursor:pointer; color:#6b6357; background:#FCFAF5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .status-opsi.pilih-lunas{ border-color: var(--daun); background:#EDF2EA; color: var(--daun-tua); font-weight:600; }
+  .status-opsi.pilih-belum{ border-color: var(--sambal); background:#FBEAE6; color:#8C3419; font-weight:600; }
 
-  /* Daftar transaksi */
-  .daftar-transaksi{
-    margin-top:6px;
-    border-top:1px solid var(--garis);
-  }
+  .daftar-transaksi{ margin-top:6px; border-top:1px solid var(--garis); }
   .item-transaksi{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:12px 0;
-    border-bottom:1px solid var(--garis);
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; padding:12px 0; border-bottom:1px solid var(--garis);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
-  .item-transaksi .info .nama-pengutang{
-    font-size:13.5px;
-    color: var(--daun-tua);
-    font-weight:600;
-  }
-  .item-transaksi .info .rincian{
-    font-size:12.5px;
-    color:#8a8171;
-    margin-top:2px;
-  }
-  .item-transaksi .kanan{
-    text-align:right;
-    flex-shrink:0;
-  }
-  .item-transaksi .harga{
-    font-size:13.5px;
-    color: var(--arang);
-    font-weight:600;
-  }
+  .item-transaksi .info .nama-pengutang{ font-size:13.5px; color: var(--daun-tua); font-weight:600; }
+  .item-transaksi .info .rincian{ font-size:12.5px; color:#8a8171; margin-top:2px; }
+  .item-transaksi .kanan{ text-align:right; flex-shrink:0; }
+  .item-transaksi .harga{ font-size:13.5px; color: var(--arang); font-weight:600; }
   .badge{
-    display:inline-block;
-    margin-top:4px;
-    padding:2px 8px;
-    border-radius:10px;
-    font-size:11px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display:inline-block; margin-top:4px; padding:2px 8px; border-radius:10px;
+    font-size:11px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
-  .badge.belum{
-    background:#FBEAE6;
-    color:#8C3419;
-  }
-  .badge.lunas{
-    background:#EDF2EA;
-    color: var(--daun-tua);
-  }
+  .badge.belum{ background:#FBEAE6; color:#8C3419; }
+  .badge.lunas{ background:#EDF2EA; color: var(--daun-tua); }
   .kosong{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size:13px;
-    color:#a39a89;
-    text-align:center;
-    padding:24px 0;
+    font-size:13px; color:#a39a89; text-align:center; padding:24px 0;
   }
   .muat{
-    text-align:center;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size:13.5px;
-    color:#8a8171;
+    text-align:center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:13.5px; color:#8a8171;
   }
 </style>
 </head>
@@ -349,28 +268,42 @@
       <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
     </div>
 
-    <div class="ringkasan">
-      <div class="angka" id="pemberiTotalUtang">Rp0</div>
-      <div class="label">Total utang belum lunas</div>
+    <div class="rekap-grid">
+      <div class="rekap-kotak">
+        <div class="angka" id="rekapPesananHariIni">0</div>
+        <div class="label">Pesanan hari ini</div>
+      </div>
+      <div class="rekap-kotak merah">
+        <div class="angka" id="rekapUtangHariIni">Rp0</div>
+        <div class="label">Utang hari ini</div>
+      </div>
     </div>
 
-    <h2>Catat utang baru</h2>
+    <h2>Catat pesanan</h2>
     <label>Pengutang</label>
     <select id="pemberiPilihPengutang">
       <option value="">Memuat daftar pengutang…</option>
     </select>
     <div class="baris-form">
       <div>
-        <label>Item</label>
-        <input type="text" id="pemberiItem" placeholder="Nasi ayam">
+        <label>Jumlah pesanan</label>
+        <input type="number" id="pemberiJumlah" min="1" value="1">
       </div>
       <div>
-        <label>Harga (Rp)</label>
+        <label>Total harga (Rp)</label>
         <input type="number" id="pemberiHarga" placeholder="15000" min="0">
       </div>
     </div>
-    <button class="aksi" id="btnTambahTransaksi" onclick="tambahTransaksi()">Tambah catatan</button>
+    <label>Status</label>
+    <div class="status-pilih">
+      <div class="status-opsi pilih-lunas" id="opsiLunas" onclick="pilihStatus('lunas')">Lunas</div>
+      <div class="status-opsi" id="opsiBelum" onclick="pilihStatus('belum')">Utang</div>
+    </div>
+    <button class="aksi" id="btnTambahTransaksi" onclick="tambahTransaksi()">Simpan catatan</button>
     <div class="pesan" id="pesanPemberiForm"></div>
+
+    <h2>Daftar utang berjalan</h2>
+    <div id="daftarUtangAgregat"><div class="kosong">Memuat…</div></div>
 
     <h2>Riwayat catatan</h2>
     <div class="daftar-transaksi" id="pemberiDaftar">
@@ -389,9 +322,11 @@
       <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
     </div>
 
-    <div class="ringkasan">
-      <div class="angka" id="pengutangTotalUtang">Rp0</div>
-      <div class="label">Total utang belum lunas</div>
+    <div class="rekap-grid">
+      <div class="rekap-kotak merah">
+        <div class="angka" id="pengutangTotalUtang">Rp0</div>
+        <div class="label">Total utang belum lunas</div>
+      </div>
     </div>
 
     <h2>Riwayat pesanan</h2>
@@ -404,12 +339,10 @@
 </div>
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-  // GANTI dengan config Firebase project kamu sendiri
   const firebaseConfig = {
     apiKey: "AIzaSyDxPsLOTKRmlAI0x-lyeRYEMnilwV4JCh4",
     authDomain: "warung-catat.firebaseapp.com",
@@ -423,50 +356,49 @@
   const db = firebase.firestore();
 
   let roleTerpilih = 'pengutang';
-  let lepasListenerTransaksi = null; // untuk melepas onSnapshot saat logout
+  let statusTerpilih = 'lunas';
+  let lepasListenerTransaksi = null;
+  let sedangDaftar = false;
 
-  const labelPeran = {
-    pengutang: 'Pengutang (pengambil makanan)',
-    pemberi: 'Pemberi utang (pemilik warung)'
-  };
-
-  // ---------- Util ----------
   function formatRupiah(angka){
     return 'Rp' + Number(angka || 0).toLocaleString('id-ID');
   }
-
+  function escapeHtml(teks){
+    const div = document.createElement('div');
+    div.textContent = teks == null ? '' : teks;
+    return div.innerHTML;
+  }
   function tampilkanLayar(nama){
     document.querySelectorAll('.layar').forEach(el => el.classList.remove('aktif'));
     document.getElementById(nama).classList.add('aktif');
     document.getElementById('kartuUtama').classList.toggle('lebar', nama === 'layarPemberi' || nama === 'layarPengutang');
   }
-
   function gantiTab(nama){
     document.getElementById('tabMasuk').classList.toggle('aktif', nama==='masuk');
     document.getElementById('tabDaftar').classList.toggle('aktif', nama==='daftar');
     document.getElementById('layarMasuk').classList.toggle('aktif', nama==='masuk');
     document.getElementById('layarDaftar').classList.toggle('aktif', nama==='daftar');
   }
-
   function pilihRole(role){
     roleTerpilih = role;
     document.getElementById('opsiPengutang').classList.toggle('pilih', role==='pengutang');
     document.getElementById('opsiPemberi').classList.toggle('pilih', role==='pemberi');
   }
-
+  function pilihStatus(s){
+    statusTerpilih = s;
+    document.getElementById('opsiLunas').className = 'status-opsi' + (s==='lunas' ? ' pilih-lunas' : '');
+    document.getElementById('opsiBelum').className = 'status-opsi' + (s==='belum' ? ' pilih-belum' : '');
+  }
   function tampilPesan(id, teks, tipe){
     const el = document.getElementById(id);
     el.textContent = teks;
     el.className = 'pesan ' + tipe;
   }
-
   function sembunyikanPesan(id){
-    const el = document.getElementById(id);
-    el.className = 'pesan';
-    el.textContent = '';
+    document.getElementById(id).className = 'pesan';
+    document.getElementById(id).textContent = '';
   }
 
-  // ---------- Daftar ----------
   function daftar(){
     const nama = document.getElementById('daftarNama').value.trim();
     const email = document.getElementById('daftarEmail').value.trim();
@@ -483,6 +415,7 @@
       return;
     }
 
+    sedangDaftar = true;
     btn.disabled = true;
     btn.textContent = 'Memproses…';
     auth.createUserWithEmailAndPassword(email, sandi)
@@ -494,6 +427,7 @@
           dibuat: firebase.firestore.FieldValue.serverTimestamp()
         });
       })
+      .then(() => auth.signOut())
       .then(() => {
         tampilPesan('pesanDaftar', 'Akun berhasil dibuat. Silakan masuk.', 'sukses');
         document.getElementById('daftarNama').value = '';
@@ -503,15 +437,16 @@
         gantiTab('masuk');
         btn.disabled = false;
         btn.textContent = 'Daftar';
+        sedangDaftar = false;
       })
       .catch((err) => {
         tampilPesan('pesanDaftar', terjemahError(err.code), 'error');
         btn.disabled = false;
         btn.textContent = 'Daftar';
+        sedangDaftar = false;
       });
   }
 
-  // ---------- Masuk ----------
   function masuk(){
     const email = document.getElementById('masukEmail').value.trim();
     const sandi = document.getElementById('masukSandi').value;
@@ -525,20 +460,17 @@
     btn.disabled = true;
     btn.textContent = 'Memproses…';
     auth.signInWithEmailAndPassword(email, sandi)
-      .catch((err) => {
-        tampilPesan('pesanMasuk', terjemahError(err.code), 'error');
-        btn.disabled = false;
-        btn.textContent = 'Masuk';
-        throw err;
-      })
       .then(() => {
         btn.disabled = false;
         btn.textContent = 'Masuk';
       })
-      .catch(() => { /* sudah ditangani */ });
+      .catch((err) => {
+        tampilPesan('pesanMasuk', terjemahError(err.code), 'error');
+        btn.disabled = false;
+        btn.textContent = 'Masuk';
+      });
   }
 
-  // ---------- Keluar ----------
   function keluar(){
     if(lepasListenerTransaksi){
       lepasListenerTransaksi();
@@ -550,7 +482,6 @@
     });
   }
 
-  // ---------- Dashboard Pemberi utang ----------
   function muatDaftarPengutangUntukPemberi(){
     const select = document.getElementById('pemberiPilihPengutang');
     db.collection('pengguna').where('role', '==', 'pengutang').get()
@@ -559,7 +490,7 @@
           select.innerHTML = '<option value="">Belum ada pengutang terdaftar</option>';
           return;
         }
-        select.innerHTML = '';
+        select.innerHTML = '<option value="">Pilih pengutang...</option>';
         snap.forEach((doc) => {
           const data = doc.data();
           const opt = document.createElement('option');
@@ -579,94 +510,131 @@
     const select = document.getElementById('pemberiPilihPengutang');
     const pengutangId = select.value;
     const pengutangNama = select.options[select.selectedIndex] ? select.options[select.selectedIndex].dataset.nama : '';
-    const item = document.getElementById('pemberiItem').value.trim();
+    const jumlah = parseInt(document.getElementById('pemberiJumlah').value) || 0;
     const harga = Number(document.getElementById('pemberiHarga').value);
     const btn = document.getElementById('btnTambahTransaksi');
 
-    if(!pengutangId || !item || !harga || harga <= 0){
-      tampilPesan('pesanPemberiForm', 'Pilih pengutang, isi item, dan harga yang valid.', 'error');
+    if(!pengutangId || jumlah < 1 || !harga || harga <= 0){
+      tampilPesan('pesanPemberiForm', 'Pilih pengutang, isi jumlah pesanan, dan harga yang valid.', 'error');
       return;
     }
 
+    const sekarang = new Date();
     btn.disabled = true;
     btn.textContent = 'Menyimpan…';
     db.collection('transaksi').add({
       pengutangId: pengutangId,
       pengutangNama: pengutangNama,
-      item: item,
+      jumlahPesanan: jumlah,
       harga: harga,
-      status: 'belum',
+      status: statusTerpilih,
       dibuatOleh: auth.currentUser.uid,
-      tanggal: firebase.firestore.FieldValue.serverTimestamp()
+      tanggal: sekarang.toISOString().slice(0,10),
+      jam: sekarang.toTimeString().slice(0,5),
+      waktu: firebase.firestore.FieldValue.serverTimestamp()
     })
       .then(() => {
-        document.getElementById('pemberiItem').value = '';
+        document.getElementById('pemberiJumlah').value = 1;
         document.getElementById('pemberiHarga').value = '';
+        document.getElementById('pemberiPilihPengutang').value = '';
+        pilihStatus('lunas');
         sembunyikanPesan('pesanPemberiForm');
         btn.disabled = false;
-        btn.textContent = 'Tambah catatan';
+        btn.textContent = 'Simpan catatan';
       })
       .catch((err) => {
         tampilPesan('pesanPemberiForm', terjemahError(err.code), 'error');
         btn.disabled = false;
-        btn.textContent = 'Tambah catatan';
+        btn.textContent = 'Simpan catatan';
       });
   }
 
-  function tandaiLunas(transaksiId){
+  function tandaiLunasSatu(transaksiId){
     db.collection('transaksi').doc(transaksiId).update({ status: 'lunas' })
-      .catch((err) => {
-        tampilPesan('pesanPemberi', terjemahError(err.code), 'error');
-      });
+      .catch((err) => tampilPesan('pesanPemberi', terjemahError(err.code), 'error'));
+  }
+
+  function tandaiLunasBanyak(ids){
+    const batch = db.batch();
+    ids.forEach(id => batch.update(db.collection('transaksi').doc(id), { status: 'lunas' }));
+    batch.commit().catch((err) => tampilPesan('pesanPemberi', terjemahError(err.code), 'error'));
   }
 
   function pantauTransaksiPemberi(uid){
     const daftarEl = document.getElementById('pemberiDaftar');
-    const totalEl = document.getElementById('pemberiTotalUtang');
 
     return db.collection('transaksi')
       .where('dibuatOleh', '==', uid)
-      .orderBy('tanggal', 'desc')
+      .orderBy('waktu', 'desc')
       .onSnapshot((snap) => {
-        if(snap.empty){
+        const list = [];
+        snap.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
+
+        if(list.length === 0){
           daftarEl.innerHTML = '<div class="kosong">Belum ada catatan.</div>';
-          totalEl.textContent = formatRupiah(0);
-          return;
-        }
-        let total = 0;
-        let html = '';
-        snap.forEach((doc) => {
-          const d = doc.data();
-          if(d.status === 'belum') total += Number(d.harga || 0);
-          html += `
+        } else {
+          daftarEl.innerHTML = list.map(d => `
             <div class="item-transaksi">
               <div class="info">
                 <div class="nama-pengutang">${escapeHtml(d.pengutangNama)}</div>
-                <div class="rincian">${escapeHtml(d.item)}</div>
+                <div class="rincian">${d.jumlahPesanan} pesanan · ${d.tanggal} ${d.jam}</div>
               </div>
               <div class="kanan">
                 <div class="harga">${formatRupiah(d.harga)}</div>
                 ${d.status === 'lunas'
                   ? '<span class="badge lunas">Lunas</span>'
-                  : `<span class="badge belum">Belum lunas</span><br><button class="aksi kecil" style="margin-top:6px" onclick="tandaiLunas('${doc.id}')">Tandai lunas</button>`}
+                  : `<span class="badge belum">Belum lunas</span><br><button class="aksi kecil" style="margin-top:6px" onclick="tandaiLunasSatu('${d.id}')">Tandai lunas</button>`}
               </div>
-            </div>`;
-        });
-        daftarEl.innerHTML = html;
-        totalEl.textContent = formatRupiah(total);
+            </div>`).join('');
+        }
+
+        renderRekapHarian(list);
+        renderUtangAgregat(list);
       }, (err) => {
         tampilPesan('pesanPemberi', terjemahError(err.code), 'error');
       });
   }
 
-  // ---------- Dashboard Pengutang ----------
+  function renderRekapHarian(list){
+    const hariIni = new Date().toISOString().slice(0,10);
+    const hariIniList = list.filter(t => t.tanggal === hariIni);
+    const totalPesanan = hariIniList.reduce((a,t) => a + (t.jumlahPesanan||0), 0);
+    const totalUtang = hariIniList.filter(t => t.status === 'belum').reduce((a,t) => a + (t.harga||0), 0);
+    document.getElementById('rekapPesananHariIni').textContent = totalPesanan;
+    document.getElementById('rekapUtangHariIni').textContent = formatRupiah(totalUtang);
+  }
+
+  function renderUtangAgregat(list){
+    const wadah = document.getElementById('daftarUtangAgregat');
+    const belum = list.filter(t => t.status === 'belum');
+    const perOrang = {};
+    belum.forEach(t => {
+      if(!perOrang[t.pengutangId]) perOrang[t.pengutangId] = { nama: t.pengutangNama, total: 0, ids: [] };
+      perOrang[t.pengutangId].total += (t.harga||0);
+      perOrang[t.pengutangId].ids.push(t.id);
+    });
+    const daftar = Object.values(perOrang);
+    if(daftar.length === 0){
+      wadah.innerHTML = '<div class="kosong">Tidak ada utang berjalan.</div>';
+      return;
+    }
+    wadah.innerHTML = daftar.map(d => `
+      <div class="item-transaksi">
+        <div class="info"><div class="nama-pengutang">${escapeHtml(d.nama)}</div></div>
+        <div class="kanan">
+          <div class="harga" style="color:var(--sambal)">${formatRupiah(d.total)}</div>
+          <button class="aksi kecil" style="margin-top:6px" onclick='tandaiLunasBanyak(${JSON.stringify(d.ids)})'>Tandai semua lunas</button>
+        </div>
+      </div>`).join('');
+  }
+
   function pantauTransaksiPengutang(uid){
     const daftarEl = document.getElementById('pengutangDaftar');
     const totalEl = document.getElementById('pengutangTotalUtang');
 
     return db.collection('transaksi')
       .where('pengutangId', '==', uid)
-      .orderBy('tanggal', 'desc')
+      .orderBy('waktu', 'desc')
       .onSnapshot((snap) => {
         if(snap.empty){
           daftarEl.innerHTML = '<div class="kosong">Belum ada catatan pesanan.</div>';
@@ -681,7 +649,8 @@
           html += `
             <div class="item-transaksi">
               <div class="info">
-                <div class="nama-pengutang">${escapeHtml(d.item)}</div>
+                <div class="nama-pengutang">${d.jumlahPesanan} pesanan</div>
+                <div class="rincian">${d.tanggal} ${d.jam}</div>
               </div>
               <div class="kanan">
                 <div class="harga">${formatRupiah(d.harga)}</div>
@@ -696,14 +665,9 @@
       });
   }
 
-  function escapeHtml(teks){
-    const div = document.createElement('div');
-    div.textContent = teks == null ? '' : teks;
-    return div.innerHTML;
-  }
-
-  // ---------- Pantau status login & routing peran ----------
   auth.onAuthStateChanged((user) => {
+    if(sedangDaftar) return;
+
     if(lepasListenerTransaksi){
       lepasListenerTransaksi();
       lepasListenerTransaksi = null;
@@ -738,21 +702,11 @@
     }
   });
 
-  // ---------- Submit dengan tombol Enter ----------
-  document.getElementById('masukSandi').addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') masuk();
-  });
-  document.getElementById('masukEmail').addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') masuk();
-  });
-  document.getElementById('daftarSandiUlang').addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') daftar();
-  });
-  document.getElementById('pemberiHarga').addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') tambahTransaksi();
-  });
+  document.getElementById('masukSandi').addEventListener('keydown', (e) => { if(e.key === 'Enter') masuk(); });
+  document.getElementById('masukEmail').addEventListener('keydown', (e) => { if(e.key === 'Enter') masuk(); });
+  document.getElementById('daftarSandiUlang').addEventListener('keydown', (e) => { if(e.key === 'Enter') daftar(); });
+  document.getElementById('pemberiHarga').addEventListener('keydown', (e) => { if(e.key === 'Enter') tambahTransaksi(); });
 
-  // ---------- Terjemahan pesan error Firebase ----------
   function terjemahError(kode){
     const peta = {
       'auth/email-already-in-use': 'Email sudah terdaftar.',
