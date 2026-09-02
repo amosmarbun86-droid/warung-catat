@@ -215,6 +215,7 @@
   }
   .btn-mini.hapus{ color:#8C3419; border-color:#E8B9AC; }
   .btn-mini.wa{ color:#1F7A4D; border-color:#BFE3CD; background:#F3FBF6; }
+  .btn-mini.pdf{ color:#8C3419; border-color:#E8B9AC; background:#FFF8F5; }
   .kosong{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size:13px; color:#a39a89; text-align:center; padding:24px 0;
@@ -364,6 +365,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDxPsLOTKRmlAI0x-lyeRYEMnilwV4JCh4",
@@ -640,6 +642,257 @@
     batch.commit().catch((err) => tampilPesan('pesanPemberi', terjemahError(err.code), 'error'));
   }
 
+
+  /* =========================
+     PDF TRANSAKSI BELUM LUNAS
+     ========================= */
+
+  function formatTanggalPDF(tanggal){
+    if(!tanggal) return '-';
+    const p = String(tanggal).split('-');
+    return p.length === 3 ? p[2] + '-' + p[1] + '-' + p[0] : tanggal;
+  }
+
+  function namaFileAman(teks){
+    return String(teks || 'pengutang')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-zA-Z0-9]+/g,'-')
+      .replace(/^-|-$/g,'') || 'pengutang';
+  }
+
+  function buatPDFTransaksi(d){
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert('Library PDF belum termuat. Periksa koneksi internet lalu coba lagi.');
+      return null;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({unit:'mm', format:'a4'});
+    const margin = 18;
+    let y = 20;
+
+    pdf.setFont('helvetica','bold');
+    pdf.setFontSize(20);
+    pdf.text('WARUNG CATAT', margin, y);
+    y += 8;
+
+    pdf.setFont('helvetica','normal');
+    pdf.setFontSize(10);
+    pdf.text('Rincian transaksi / catatan utang', margin, y);
+    y += 10;
+
+    pdf.setLineWidth(.4);
+    pdf.line(margin, y, 192, y);
+    y += 9;
+
+    const data = [
+      ['Nama Pengutang', d.pengutangNama || '-'],
+      ['Tanggal', formatTanggalPDF(d.tanggal)],
+      ['Jam', d.jam || '-'],
+      ['ID Transaksi', d.id || '-'],
+      ['Status', d.status === 'belum' ? 'BELUM LUNAS' : 'LUNAS']
+    ];
+
+    pdf.setFontSize(10);
+    data.forEach(([label, value]) => {
+      pdf.setFont('helvetica','bold');
+      pdf.text(label, margin, y);
+      pdf.setFont('helvetica','normal');
+      pdf.text(String(value), 72, y);
+      y += 7;
+    });
+
+    y += 3;
+    pdf.setFont('helvetica','bold');
+    pdf.setFontSize(12);
+    pdf.text('RINCIAN PESANAN', margin, y);
+    y += 8;
+
+    const item = d.itemPesanan || ((d.jumlahPesanan || 0) + ' pesanan');
+    const lines = pdf.splitTextToSize(item, 125);
+    pdf.setFont('helvetica','normal');
+    pdf.setFontSize(10);
+    pdf.text(lines, margin, y);
+    y += Math.max(7, lines.length * 5);
+
+    pdf.text('Jumlah pesanan: ' + (d.jumlahPesanan || 0), margin, y);
+    y += 8;
+
+    pdf.setLineWidth(.3);
+    pdf.line(margin, y, 192, y);
+    y += 9;
+
+    pdf.setFont('helvetica','bold');
+    pdf.setFontSize(13);
+    pdf.text('TOTAL', margin, y);
+    pdf.text(formatRupiah(d.harga || 0), 192, y, {align:'right'});
+    y += 10;
+
+    pdf.setFontSize(11);
+    pdf.text(d.status === 'belum' ? 'STATUS: BELUM LUNAS' : 'STATUS: LUNAS', margin, y);
+
+    pdf.setFont('helvetica','normal');
+    pdf.setFontSize(8);
+    pdf.text('Dibuat oleh Warung Catat', margin, 275);
+
+    const filename =
+      'Warung-Catat-' +
+      namaFileAman(d.pengutangNama) +
+      '-' +
+      String(d.tanggal || 'transaksi').replace(/[^0-9-]/g,'') +
+      '.pdf';
+
+    pdf.save(filename);
+    return {pdf, filename};
+  }
+
+  function buatPDFSemuaUtang(pengutangId){
+    const list = transaksiPemberiCache.filter(
+      t => t.pengutangId === pengutangId && t.status === 'belum'
+    );
+
+    if(!list.length){
+      alert('Tidak ada transaksi yang belum lunas.');
+      return null;
+    }
+
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert('Library PDF belum termuat. Periksa koneksi internet lalu coba lagi.');
+      return null;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({unit:'mm', format:'a4'});
+    const margin = 15;
+    let y = 18;
+    let total = 0;
+    const nama = list[0].pengutangNama || 'Pengutang';
+
+    pdf.setFont('helvetica','bold');
+    pdf.setFontSize(19);
+    pdf.text('WARUNG CATAT', margin, y);
+    y += 7;
+
+    pdf.setFont('helvetica','normal');
+    pdf.setFontSize(10);
+    pdf.text('Rincian seluruh utang yang belum lunas', margin, y);
+    y += 8;
+
+    pdf.setFont('helvetica','bold');
+    pdf.text('Nama: ' + nama, margin, y);
+    y += 8;
+
+    pdf.setLineWidth(.3);
+    pdf.line(margin, y, 195, y);
+    y += 8;
+
+    list.forEach((t, index) => {
+      if(y > 258){
+        pdf.addPage();
+        y = 18;
+      }
+
+      const item = t.itemPesanan || ((t.jumlahPesanan || 0) + ' pesanan');
+      const lines = pdf.splitTextToSize(item, 105);
+
+      pdf.setFont('helvetica','bold');
+      pdf.setFontSize(10);
+      pdf.text(
+        (index + 1) + '. ' + formatTanggalPDF(t.tanggal) + ' ' + (t.jam || ''),
+        margin, y
+      );
+      y += 5;
+
+      pdf.setFont('helvetica','normal');
+      pdf.text(lines, margin, y);
+      y += Math.max(5, lines.length * 4.5);
+
+      pdf.text('Jumlah: ' + (t.jumlahPesanan || 0), margin, y);
+      pdf.text(formatRupiah(t.harga || 0), 195, y, {align:'right'});
+      y += 7;
+
+      total += Number(t.harga || 0);
+
+      pdf.setLineWidth(.15);
+      pdf.line(margin, y, 195, y);
+      y += 5;
+    });
+
+    if(y > 265){
+      pdf.addPage();
+      y = 18;
+    }
+
+    pdf.setFont('helvetica','bold');
+    pdf.setFontSize(13);
+    pdf.text('TOTAL UTANG', margin, y);
+    pdf.text(formatRupiah(total), 195, y, {align:'right'});
+
+    pdf.setFont('helvetica','normal');
+    pdf.setFontSize(8);
+    pdf.text('Dokumen dibuat oleh Warung Catat.', margin, 280);
+
+    const filename = 'Warung-Catat-Utang-' + namaFileAman(nama) + '.pdf';
+    pdf.save(filename);
+
+    return {pdf, filename, total};
+  }
+
+  function kirimPDFUtangWA(id){
+    const d = transaksiPemberiCache.find(t => t.id === id);
+    if(!d) return;
+
+    if(d.status !== 'belum'){
+      alert('Fitur ini khusus transaksi yang belum lunas.');
+      return;
+    }
+
+    const hasil = buatPDFTransaksi(d);
+    if(!hasil) return;
+
+    const nomor = formatNomorWA((petaPengutang[d.pengutangId] || {}).telepon);
+
+    const pesan =
+      '*Warung Catat - Rincian Utang*\\n' +
+      'Nama: ' + d.pengutangNama + '\\n' +
+      'Tanggal: ' + formatTanggalPDF(d.tanggal) + ' ' + (d.jam || '') + '\\n' +
+      'Pesanan: ' + (d.itemPesanan || ((d.jumlahPesanan || 0) + ' pesanan')) + '\\n' +
+      'Total: ' + formatRupiah(d.harga) + '\\n' +
+      'Status: *BELUM LUNAS*\\n\\n' +
+      'PDF rincian transaksi sudah dibuat. Silakan lampirkan file PDF yang baru diunduh ke chat ini.';
+
+    const url = 'https://wa.me/' + nomor + '?text=' + encodeURIComponent(pesan);
+    window.open(url, '_blank');
+  }
+
+  function kirimSemuaUtangWA(pengutangId){
+    const list = transaksiPemberiCache.filter(
+      t => t.pengutangId === pengutangId && t.status === 'belum'
+    );
+
+    if(!list.length){
+      alert('Tidak ada utang belum lunas.');
+      return;
+    }
+
+    const hasil = buatPDFSemuaUtang(pengutangId);
+    if(!hasil) return;
+
+    const nama = list[0].pengutangNama || 'Pengutang';
+    const nomor = formatNomorWA((petaPengutang[pengutangId] || {}).telepon);
+
+    const pesan =
+      '*Warung Catat - Rekap Utang*\\n' +
+      'Nama: ' + nama + '\\n' +
+      'Jumlah transaksi belum lunas: ' + list.length + '\\n' +
+      'Total utang: ' + formatRupiah(hasil.total) + '\\n\\n' +
+      'PDF rekap seluruh utang sudah dibuat. Silakan lampirkan file PDF yang baru diunduh ke chat ini.';
+
+    const url = 'https://wa.me/' + nomor + '?text=' + encodeURIComponent(pesan);
+    window.open(url, '_blank');
+  }
+
   function kirimBuktiWA(id){
     const d = transaksiPemberiCache.find(t => t.id === id);
     if(!d) return;
@@ -714,20 +967,28 @@
     const perOrang = {};
     belum.forEach(t => {
       if(!perOrang[t.pengutangId]) perOrang[t.pengutangId] = { nama: t.pengutangNama, total: 0, ids: [] };
-      perOrang[t.pengutangId].total += (t.harga||0);
+      perOrang[t.pengutangId].total += Number(t.harga || 0);
       perOrang[t.pengutangId].ids.push(t.id);
     });
-    const daftar = Object.values(perOrang);
+
+    const daftar = Object.entries(perOrang);
     if(daftar.length === 0){
       wadah.innerHTML = '<div class="kosong">Tidak ada utang berjalan.</div>';
       return;
     }
-    wadah.innerHTML = daftar.map(d => `
+
+    wadah.innerHTML = daftar.map(([pengutangId, d]) => `
       <div class="item-transaksi">
-        <div class="info"><div class="nama-pengutang">${escapeHtml(d.nama)}</div></div>
+        <div class="info">
+          <div class="nama-pengutang">${escapeHtml(d.nama)}</div>
+          <div class="rincian">${d.ids.length} transaksi belum lunas</div>
+        </div>
         <div class="kanan">
           <div class="harga" style="color:var(--sambal)">${formatRupiah(d.total)}</div>
-          <button class="aksi kecil" style="margin-top:6px" onclick='tandaiLunasBanyak(${JSON.stringify(d.ids)})'>Tandai semua lunas</button>
+          <div class="button-kecil-set">
+            <button class="btn-mini pdf" onclick="kirimSemuaUtangWA('${pengutangId}')">📄 PDF Semua + WA</button>
+            <button class="btn-mini" onclick='tandaiLunasBanyak(${JSON.stringify(d.ids)})'>Tandai semua lunas</button>
+          </div>
         </div>
       </div>`).join('');
   }
