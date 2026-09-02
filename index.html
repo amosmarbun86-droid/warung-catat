@@ -134,6 +134,7 @@
   button.aksi:disabled{ opacity:0.6; cursor:default; }
   button.sekunder{ background:#fff; color: var(--daun-tua); border:1px solid var(--garis); }
   button.kecil{ width:auto; margin-top:0; padding:6px 12px; font-size:12.5px; }
+  .tersembunyi{ display:none !important; }
   .pesan{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size:13px;
@@ -184,14 +185,18 @@
   .status-opsi.pilih-lunas{ border-color: var(--daun); background:#EDF2EA; color: var(--daun-tua); font-weight:600; }
   .status-opsi.pilih-belum{ border-color: var(--sambal); background:#FBEAE6; color:#8C3419; font-weight:600; }
 
+  .form-aksi-ganda{ display:flex; gap:8px; }
+  .form-aksi-ganda button.aksi{ margin-top:20px; }
+
   .daftar-transaksi{ margin-top:6px; border-top:1px solid var(--garis); }
   .item-transaksi{
-    display:flex; align-items:center; justify-content:space-between;
+    display:flex; align-items:flex-start; justify-content:space-between;
     gap:10px; padding:12px 0; border-bottom:1px solid var(--garis);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   .item-transaksi .info .nama-pengutang{ font-size:13.5px; color: var(--daun-tua); font-weight:600; }
-  .item-transaksi .info .rincian{ font-size:12.5px; color:#8a8171; margin-top:2px; }
+  .item-transaksi .info .item-pesan{ font-size:12.5px; color: var(--arang); margin-top:2px; }
+  .item-transaksi .info .rincian{ font-size:12px; color:#8a8171; margin-top:2px; }
   .item-transaksi .kanan{ text-align:right; flex-shrink:0; }
   .item-transaksi .harga{ font-size:13.5px; color: var(--arang); font-weight:600; }
   .badge{
@@ -200,6 +205,16 @@
   }
   .badge.belum{ background:#FBEAE6; color:#8C3419; }
   .badge.lunas{ background:#EDF2EA; color: var(--daun-tua); }
+  .button-kecil-set{
+    display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; justify-content:flex-end;
+  }
+  .btn-mini{
+    padding:5px 10px; font-size:11.5px; border-radius:2px;
+    border:1px solid var(--garis); background:#fff; color:#6b6357; cursor:pointer;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .btn-mini.hapus{ color:#8C3419; border-color:#E8B9AC; }
+  .btn-mini.wa{ color:#1F7A4D; border-color:#BFE3CD; background:#F3FBF6; }
   .kosong{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size:13px; color:#a39a89; text-align:center; padding:24px 0;
@@ -244,6 +259,8 @@
       <input type="text" id="daftarNama" placeholder="Nama lengkap">
       <label>Email</label>
       <input type="email" id="daftarEmail" placeholder="nama@email.com" autocomplete="username">
+      <label>No. WhatsApp (opsional)</label>
+      <input type="tel" id="daftarWA" placeholder="08xxxxxxxxxx">
       <label>Kata sandi</label>
       <input type="password" id="daftarSandi" placeholder="Minimal 6 karakter" autocomplete="new-password">
       <label>Ulangi kata sandi</label>
@@ -279,11 +296,13 @@
       </div>
     </div>
 
-    <h2>Catat pesanan</h2>
+    <h2 id="formCatatHeading">Catat pesanan</h2>
     <label>Pengutang</label>
     <select id="pemberiPilihPengutang">
       <option value="">Memuat daftar pengutang…</option>
     </select>
+    <label>Item pesanan (opsional)</label>
+    <input type="text" id="pemberiItem" placeholder="misal: 2x Nasi Ayam, 1x Es Teh">
     <div class="baris-form">
       <div>
         <label>Jumlah pesanan</label>
@@ -299,7 +318,10 @@
       <div class="status-opsi pilih-lunas" id="opsiLunas" onclick="pilihStatus('lunas')">Lunas</div>
       <div class="status-opsi" id="opsiBelum" onclick="pilihStatus('belum')">Utang</div>
     </div>
-    <button class="aksi" id="btnTambahTransaksi" onclick="tambahTransaksi()">Simpan catatan</button>
+    <div class="form-aksi-ganda">
+      <button class="aksi" id="btnTambahTransaksi" onclick="tambahTransaksi()">Simpan catatan</button>
+      <button class="aksi sekunder tersembunyi" id="btnBatalEdit" onclick="batalEdit()">Batal</button>
+    </div>
     <div class="pesan" id="pesanPemberiForm"></div>
 
     <h2>Daftar utang berjalan</h2>
@@ -359,6 +381,9 @@
   let statusTerpilih = 'lunas';
   let lepasListenerTransaksi = null;
   let sedangDaftar = false;
+  let transaksiPemberiCache = [];
+  let petaPengutang = {};
+  let editIdSedang = null;
 
   function formatRupiah(angka){
     return 'Rp' + Number(angka || 0).toLocaleString('id-ID');
@@ -367,6 +392,14 @@
     const div = document.createElement('div');
     div.textContent = teks == null ? '' : teks;
     return div.innerHTML;
+  }
+  function formatNomorWA(nomor){
+    if(!nomor) return '';
+    let n = String(nomor).replace(/[^0-9+]/g, '');
+    if(n.startsWith('+62')) n = n.slice(1);
+    else if(n.startsWith('0')) n = '62' + n.slice(1);
+    else if(!n.startsWith('62')) n = '62' + n;
+    return n;
   }
   function tampilkanLayar(nama){
     document.querySelectorAll('.layar').forEach(el => el.classList.remove('aktif'));
@@ -402,6 +435,7 @@
   function daftar(){
     const nama = document.getElementById('daftarNama').value.trim();
     const email = document.getElementById('daftarEmail').value.trim();
+    const noWhatsapp = document.getElementById('daftarWA').value.trim();
     const sandi = document.getElementById('daftarSandi').value;
     const sandiUlang = document.getElementById('daftarSandiUlang').value;
     const btn = document.getElementById('btnDaftar');
@@ -423,6 +457,7 @@
         return db.collection('pengguna').doc(cred.user.uid).set({
           nama: nama,
           email: email,
+          noWhatsapp: noWhatsapp || null,
           role: roleTerpilih,
           dibuat: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -432,6 +467,7 @@
         tampilPesan('pesanDaftar', 'Akun berhasil dibuat. Silakan masuk.', 'sukses');
         document.getElementById('daftarNama').value = '';
         document.getElementById('daftarEmail').value = '';
+        document.getElementById('daftarWA').value = '';
         document.getElementById('daftarSandi').value = '';
         document.getElementById('daftarSandiUlang').value = '';
         gantiTab('masuk');
@@ -491,8 +527,10 @@
           return;
         }
         select.innerHTML = '<option value="">Pilih pengutang...</option>';
+        petaPengutang = {};
         snap.forEach((doc) => {
           const data = doc.data();
+          petaPengutang[doc.id] = { nama: data.nama, telepon: data.noWhatsapp || '' };
           const opt = document.createElement('option');
           opt.value = doc.id;
           opt.textContent = data.nama;
@@ -506,10 +544,19 @@
       });
   }
 
+  function resetFormTransaksi(){
+    document.getElementById('pemberiPilihPengutang').value = '';
+    document.getElementById('pemberiItem').value = '';
+    document.getElementById('pemberiJumlah').value = 1;
+    document.getElementById('pemberiHarga').value = '';
+    pilihStatus('lunas');
+  }
+
   function tambahTransaksi(){
     const select = document.getElementById('pemberiPilihPengutang');
     const pengutangId = select.value;
     const pengutangNama = select.options[select.selectedIndex] ? select.options[select.selectedIndex].dataset.nama : '';
+    const itemPesanan = document.getElementById('pemberiItem').value.trim();
     const jumlah = parseInt(document.getElementById('pemberiJumlah').value) || 0;
     const harga = Number(document.getElementById('pemberiHarga').value);
     const btn = document.getElementById('btnTambahTransaksi');
@@ -519,34 +566,67 @@
       return;
     }
 
-    const sekarang = new Date();
-    btn.disabled = true;
-    btn.textContent = 'Menyimpan…';
-    db.collection('transaksi').add({
+    const dataTransaksi = {
       pengutangId: pengutangId,
       pengutangNama: pengutangNama,
+      itemPesanan: itemPesanan,
       jumlahPesanan: jumlah,
       harga: harga,
-      status: statusTerpilih,
-      dibuatOleh: auth.currentUser.uid,
-      tanggal: sekarang.toISOString().slice(0,10),
-      jam: sekarang.toTimeString().slice(0,5),
-      waktu: firebase.firestore.FieldValue.serverTimestamp()
-    })
-      .then(() => {
-        document.getElementById('pemberiJumlah').value = 1;
-        document.getElementById('pemberiHarga').value = '';
-        document.getElementById('pemberiPilihPengutang').value = '';
-        pilihStatus('lunas');
+      status: statusTerpilih
+    };
+
+    btn.disabled = true;
+    btn.textContent = editIdSedang ? 'Memperbarui…' : 'Menyimpan…';
+
+    const aksi = editIdSedang
+      ? db.collection('transaksi').doc(editIdSedang).update(dataTransaksi)
+      : db.collection('transaksi').add(Object.assign({}, dataTransaksi, {
+          dibuatOleh: auth.currentUser.uid,
+          tanggal: new Date().toISOString().slice(0,10),
+          jam: new Date().toTimeString().slice(0,5),
+          waktu: firebase.firestore.FieldValue.serverTimestamp()
+        }));
+
+    aksi.then(() => {
+        batalEdit();
         sembunyikanPesan('pesanPemberiForm');
         btn.disabled = false;
-        btn.textContent = 'Simpan catatan';
       })
       .catch((err) => {
         tampilPesan('pesanPemberiForm', terjemahError(err.code), 'error');
         btn.disabled = false;
-        btn.textContent = 'Simpan catatan';
+        btn.textContent = editIdSedang ? 'Update catatan' : 'Simpan catatan';
       });
+  }
+
+  function mulaiEditTransaksi(id){
+    const d = transaksiPemberiCache.find(t => t.id === id);
+    if(!d) return;
+    editIdSedang = id;
+    document.getElementById('pemberiPilihPengutang').value = d.pengutangId;
+    document.getElementById('pemberiItem').value = d.itemPesanan || '';
+    document.getElementById('pemberiJumlah').value = d.jumlahPesanan;
+    document.getElementById('pemberiHarga').value = d.harga;
+    pilihStatus(d.status);
+    document.getElementById('btnTambahTransaksi').textContent = 'Update catatan';
+    document.getElementById('btnBatalEdit').classList.remove('tersembunyi');
+    document.getElementById('formCatatHeading').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function batalEdit(){
+    editIdSedang = null;
+    resetFormTransaksi();
+    document.getElementById('btnTambahTransaksi').textContent = 'Simpan catatan';
+    document.getElementById('btnBatalEdit').classList.add('tersembunyi');
+  }
+
+  function hapusTransaksi(id){
+    if(!confirm('Hapus catatan ini? Tindakan ini tidak bisa dibatalkan.')) return;
+    db.collection('transaksi').doc(id).delete()
+      .then(() => {
+        if(editIdSedang === id) batalEdit();
+      })
+      .catch((err) => tampilPesan('pesanPemberi', terjemahError(err.code), 'error'));
   }
 
   function tandaiLunasSatu(transaksiId){
@@ -560,6 +640,21 @@
     batch.commit().catch((err) => tampilPesan('pesanPemberi', terjemahError(err.code), 'error'));
   }
 
+  function kirimBuktiWA(id){
+    const d = transaksiPemberiCache.find(t => t.id === id);
+    if(!d) return;
+    const rincianItem = d.itemPesanan ? d.itemPesanan : (d.jumlahPesanan + ' pesanan');
+    const pesan = '*Warung Catat - Bukti Pembayaran*\n'
+      + 'Nama: ' + d.pengutangNama + '\n'
+      + 'Tanggal: ' + d.tanggal + ' ' + d.jam + '\n'
+      + 'Pesanan: ' + rincianItem + '\n'
+      + 'Total: ' + formatRupiah(d.harga) + '\n'
+      + 'Status: LUNAS ✅';
+    const nomor = formatNomorWA((petaPengutang[d.pengutangId] || {}).telepon);
+    const url = 'https://wa.me/' + nomor + '?text=' + encodeURIComponent(pesan);
+    window.open(url, '_blank');
+  }
+
   function pantauTransaksiPemberi(uid){
     const daftarEl = document.getElementById('pemberiDaftar');
 
@@ -569,6 +664,7 @@
       .onSnapshot((snap) => {
         const list = [];
         snap.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
+        transaksiPemberiCache = list;
 
         if(list.length === 0){
           daftarEl.innerHTML = '<div class="kosong">Belum ada catatan.</div>';
@@ -577,13 +673,21 @@
             <div class="item-transaksi">
               <div class="info">
                 <div class="nama-pengutang">${escapeHtml(d.pengutangNama)}</div>
+                ${d.itemPesanan ? `<div class="item-pesan">${escapeHtml(d.itemPesanan)}</div>` : ''}
                 <div class="rincian">${d.jumlahPesanan} pesanan · ${d.tanggal} ${d.jam}</div>
               </div>
               <div class="kanan">
                 <div class="harga">${formatRupiah(d.harga)}</div>
                 ${d.status === 'lunas'
                   ? '<span class="badge lunas">Lunas</span>'
-                  : `<span class="badge belum">Belum lunas</span><br><button class="aksi kecil" style="margin-top:6px" onclick="tandaiLunasSatu('${d.id}')">Tandai lunas</button>`}
+                  : '<span class="badge belum">Belum lunas</span>'}
+                <div class="button-kecil-set">
+                  ${d.status !== 'lunas'
+                    ? `<button class="btn-mini" onclick="tandaiLunasSatu('${d.id}')">Tandai lunas</button>`
+                    : `<button class="btn-mini wa" onclick="kirimBuktiWA('${d.id}')">Kirim bukti WA</button>`}
+                  <button class="btn-mini" onclick="mulaiEditTransaksi('${d.id}')">Edit</button>
+                  <button class="btn-mini hapus" onclick="hapusTransaksi('${d.id}')">Hapus</button>
+                </div>
               </div>
             </div>`).join('');
         }
@@ -649,8 +753,8 @@
           html += `
             <div class="item-transaksi">
               <div class="info">
-                <div class="nama-pengutang">${d.jumlahPesanan} pesanan</div>
-                <div class="rincian">${d.tanggal} ${d.jam}</div>
+                <div class="nama-pengutang">${d.itemPesanan ? escapeHtml(d.itemPesanan) : d.jumlahPesanan + ' pesanan'}</div>
+                <div class="rincian">${d.itemPesanan ? d.jumlahPesanan + ' pesanan · ' : ''}${d.tanggal} ${d.jam}</div>
               </div>
               <div class="kanan">
                 <div class="harga">${formatRupiah(d.harga)}</div>
