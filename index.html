@@ -266,7 +266,8 @@
   <!-- LAYAR MUAT -->
   <div id="layarMuat" class="layar aktif">
     <h1>Warung Catat</h1>
-    <p class="muat">Memeriksa sesi masuk…</p>
+    <p class="muat" id="teksMuat">Memeriksa sesi masuk…</p>
+    <button class="aksi sekunder kecil tersembunyi" id="btnMuatUlang" onclick="location.reload()">Coba lagi</button>
   </div>
 
   <!-- LAYAR AUTENTIKASI -->
@@ -441,7 +442,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDxPsLOTKRmlAI0x-lyeRYEMnilwV4JCh4",
@@ -769,6 +769,20 @@
      QR UNDANGAN WARUNG
      ========================= */
 
+  let qrLibPromise = null;
+  function muatLibraryQR(){
+    if(window.QRCode) return Promise.resolve();
+    if(qrLibPromise) return qrLibPromise;
+    qrLibPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('Gagal memuat library QR. Periksa koneksi internet.'));
+      document.head.appendChild(s);
+    });
+    return qrLibPromise;
+  }
+
   function buatQRWarung(){
     if(!warungSekarang) return;
     const uid = auth.currentUser.uid;
@@ -811,8 +825,13 @@
     qrSekarang.link = link;
     document.getElementById('panelQR').classList.remove('tersembunyi');
     const canvas = document.getElementById('qrCanvas');
-    canvas.innerHTML = '';
-    new QRCode(canvas, { text: link, width: 200, height: 200 });
+    canvas.innerHTML = '<div class="kosong">Memuat QR…</div>';
+    muatLibraryQR().then(() => {
+      canvas.innerHTML = '';
+      new QRCode(canvas, { text: link, width: 200, height: 200 });
+    }).catch((err) => {
+      canvas.innerHTML = '<div class="kosong">' + err.message + '</div>';
+    });
     document.getElementById('qrLink').innerHTML =
       '<div>Scan QR ini untuk daftar sebagai pengutang di ' + escapeHtml(warungSekarang.namaWarung) + ':</div>' +
       '<b>' + escapeHtml(link) + '</b>' +
@@ -1424,7 +1443,15 @@
       });
   }
 
+  const timeoutMuat = setTimeout(() => {
+    if(document.getElementById('layarMuat').classList.contains('aktif')){
+      document.getElementById('teksMuat').textContent = 'Gagal terhubung ke server. Periksa koneksi internet kamu.';
+      document.getElementById('btnMuatUlang').classList.remove('tersembunyi');
+    }
+  }, 12000);
+
   auth.onAuthStateChanged((user) => {
+    clearTimeout(timeoutMuat);
     if(sedangDaftar) return;
 
     if(lepasListenerTransaksi){
