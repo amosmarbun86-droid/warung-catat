@@ -224,6 +224,39 @@
     text-align:center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size:13.5px; color:#8a8171;
   }
+  .header-teks .warung{
+    font-size:13px; color: var(--sambal); font-weight:600; margin-top:1px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .header-aksi{ display:flex; gap:6px; flex-shrink:0; }
+  .daftar-warung-item{
+    width:100%; text-align:left; margin-top:8px; padding:14px 14px;
+    background:#FCFAF5; border:1px solid var(--garis); border-radius:2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:14px; color: var(--daun-tua); cursor:pointer; font-weight:600;
+  }
+  .panel-kotak{
+    margin-top:18px; padding:16px; background:#FCFAF5;
+    border:1px solid var(--garis); border-radius:2px;
+  }
+  .panel-kotak h2{ margin-top:0; }
+  #qrCanvas{ display:flex; justify-content:center; padding:10px 0; }
+  .qr-info{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:12px; color:#6b6357; text-align:center; word-break:break-all;
+    line-height:1.6;
+  }
+  .anggota-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 0; border-bottom:1px solid var(--garis);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:13px; color: var(--arang);
+  }
+  .anggota-item .peran-badge{ font-size:11px; color:#8a8171; }
+  .item-ringkas{
+    padding:10px 0; border-bottom:1px solid var(--garis);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
 </style>
 </head>
 <body>
@@ -240,6 +273,7 @@
   <div id="layarAuth" class="layar">
     <h1>Warung Catat</h1>
     <p class="sub">Catatan pesanan harian &amp; utang makanan di warung nasi.</p>
+    <div class="pesan" id="infoQR"></div>
 
     <div class="tab">
       <button id="tabMasuk" class="aktif" onclick="gantiTab('masuk')">Masuk</button>
@@ -276,14 +310,51 @@
     </div>
   </div>
 
+  <!-- LAYAR WARUNG (buat / pilih warung) -->
+  <div id="layarWarung" class="layar">
+    <h1>Warung Catat</h1>
+    <div id="isiLayarWarung"></div>
+    <button class="aksi sekunder kecil" style="margin-top:16px" onclick="keluar()">Keluar</button>
+  </div>
+
   <!-- DASHBOARD PEMBERI UTANG -->
   <div id="layarPemberi" class="layar">
     <div class="header-dasbor">
       <div class="header-teks">
         <div class="nama" id="pemberiNama">—</div>
-        <div class="peran">Pemberi utang</div>
+        <div class="warung" id="pemberiWarungNama">—</div>
+        <div class="peran">Pemilik warung</div>
       </div>
-      <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
+      <div class="header-aksi">
+        <button class="aksi sekunder kecil" onclick="gantiWarung()">Ganti warung</button>
+        <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
+      </div>
+    </div>
+
+    <div class="panel-kotak">
+      <h2 style="margin-top:0">QR undangan warung</h2>
+      <p class="sub" style="margin-bottom:10px">Bagikan QR ini agar pengutang bisa mendaftar dan otomatis terhubung ke warung ini.</p>
+      <div id="panelQR" class="tersembunyi">
+        <div id="qrCanvas"></div>
+        <div class="qr-info" id="qrLink"></div>
+        <div class="form-aksi-ganda">
+          <button class="aksi sekunder kecil" onclick="salinQRLink()">Salin link</button>
+          <button class="aksi sekunder kecil" onclick="nonaktifkanQR()">Nonaktifkan</button>
+        </div>
+      </div>
+      <button class="aksi sekunder kecil" style="margin-top:10px" onclick="buatQRWarung()">Buat / perbarui QR</button>
+      <div class="pesan" id="pesanQR"></div>
+    </div>
+
+    <div class="panel-kotak">
+      <h2 style="margin-top:0">Anggota warung</h2>
+      <button class="aksi sekunder kecil" onclick="tampilkanAnggota()">Lihat anggota</button>
+      <div id="panelAnggota" class="tersembunyi" style="margin-top:12px">
+        <div id="daftarAnggota"></div>
+        <label>Tambah pemilik lain (email)</label>
+        <input type="email" id="emailPemilikBaru" placeholder="email@contoh.com">
+        <button class="aksi sekunder kecil" style="margin-top:10px" onclick="tambahPemilik()">Tambah pemilik</button>
+      </div>
     </div>
 
     <div class="rekap-grid">
@@ -340,9 +411,13 @@
     <div class="header-dasbor">
       <div class="header-teks">
         <div class="nama" id="pengutangNama">—</div>
+        <div class="warung" id="pengutangWarungNama">—</div>
         <div class="peran">Pengutang</div>
       </div>
-      <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
+      <div class="header-aksi">
+        <button class="aksi sekunder kecil" onclick="gantiWarung()">Ganti warung</button>
+        <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
+      </div>
     </div>
 
     <div class="rekap-grid">
@@ -366,6 +441,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDxPsLOTKRmlAI0x-lyeRYEMnilwV4JCh4",
@@ -386,6 +462,10 @@
   let transaksiPemberiCache = [];
   let petaPengutang = {};
   let editIdSedang = null;
+  let warungSekarang = null;
+  let profilSekarang = null;
+  let qrSekarang = null;
+  let joinToken = new URLSearchParams(location.search).get('join');
 
   function formatRupiah(angka){
     return 'Rp' + Number(angka || 0).toLocaleString('id-ID');
@@ -406,7 +486,7 @@
   function tampilkanLayar(nama){
     document.querySelectorAll('.layar').forEach(el => el.classList.remove('aktif'));
     document.getElementById(nama).classList.add('aktif');
-    document.getElementById('kartuUtama').classList.toggle('lebar', nama === 'layarPemberi' || nama === 'layarPengutang');
+    document.getElementById('kartuUtama').classList.toggle('lebar', nama === 'layarPemberi' || nama === 'layarPengutang' || nama === 'layarWarung');
   }
   function gantiTab(nama){
     document.getElementById('tabMasuk').classList.toggle('aktif', nama==='masuk');
@@ -514,27 +594,321 @@
       lepasListenerTransaksi();
       lepasListenerTransaksi = null;
     }
+    warungSekarang = null;
+    profilSekarang = null;
+    qrSekarang = null;
     auth.signOut().then(() => {
       document.getElementById('masukEmail').value = '';
       document.getElementById('masukSandi').value = '';
     });
   }
 
-  function muatDaftarPengutangUntukPemberi(){
-    const select = document.getElementById('pemberiPilihPengutang');
-    db.collection('pengguna').where('role', '==', 'pengutang').get()
+  /* =========================
+     SISTEM MULTI-WARUNG
+     ========================= */
+
+  function ambilWarung(warungId){
+    return db.collection('warung').doc(warungId).get()
+      .then((doc) => doc.exists ? { id: doc.id, ...doc.data() } : null);
+  }
+
+  function muatKeanggotaan(uid, role){
+    return db.collection('anggotaWarung')
+      .where('userId', '==', uid)
+      .where('role', '==', role)
+      .where('aktif', '==', true)
+      .get()
+      .then((snap) => snap.docs.map((d) => d.data()));
+  }
+
+  function gabungDariQR(uid){
+    if(!joinToken) return Promise.resolve();
+    return db.collection('qrWarung').where('token', '==', joinToken).where('aktif', '==', true).limit(1).get()
+      .then((snap) => {
+        if(snap.empty) return;
+        const qr = snap.docs[0].data();
+        return db.collection('anggotaWarung').doc(qr.warungId + '_' + uid).set({
+          warungId: qr.warungId,
+          userId: uid,
+          nama: profilSekarang ? profilSekarang.nama : '',
+          email: profilSekarang ? profilSekarang.email : '',
+          noWhatsapp: profilSekarang ? (profilSekarang.noWhatsapp || null) : null,
+          role: 'pengutang',
+          aktif: true,
+          bergabung: firebase.firestore.FieldValue.serverTimestamp(),
+          ditambahkanOleh: uid
+        }, { merge: true });
+      })
+      .then(() => {
+        joinToken = null;
+        history.replaceState(null, '', location.pathname);
+      })
+      .catch(() => {});
+  }
+
+  function bukaDashboardSesuaiRole(uid, profil){
+    profilSekarang = profil;
+    if(profil.role === 'pemberi'){
+      muatKeanggotaan(uid, 'pemilik').then((daftar) => {
+        if(daftar.length === 0){
+          renderLayarWarung([], true);
+        } else if(daftar.length === 1){
+          bukaWarungPemilik(daftar[0].warungId);
+        } else {
+          renderLayarWarung(daftar, true);
+        }
+      });
+    } else {
+      muatKeanggotaan(uid, 'pengutang').then((daftar) => {
+        if(daftar.length === 0){
+          tampilkanLayar('layarAuth');
+          tampilPesan('pesanMasuk', 'Akun Anda belum terhubung ke warung manapun. Minta pemilik warung membagikan QR undangan.', 'error');
+        } else if(daftar.length === 1){
+          bukaWarungPengutang(daftar[0].warungId);
+        } else {
+          renderLayarWarung(daftar, false);
+        }
+      });
+    }
+  }
+
+  function renderLayarWarung(daftarAnggota, bolehBuat){
+    const wadah = document.getElementById('isiLayarWarung');
+    let html = '';
+    if(daftarAnggota.length){
+      html += '<p class="sub">Pilih warung yang ingin dikelola.</p>';
+      daftarAnggota.forEach((a) => {
+        ambilWarung(a.warungId).then((w) => {
+          if(!w) return;
+          const btn = document.createElement('button');
+          btn.className = 'daftar-warung-item';
+          btn.textContent = w.namaWarung;
+          btn.onclick = () => (bolehBuat ? bukaWarungPemilik(a.warungId) : bukaWarungPengutang(a.warungId));
+          wadah.appendChild(btn);
+        });
+      });
+    } else if(!bolehBuat){
+      html += '<p class="sub">Akun Anda belum terhubung ke warung manapun.</p>';
+    }
+    if(bolehBuat){
+      html += '<h2>Buat warung baru</h2>' +
+        '<label>Nama warung</label>' +
+        '<input type="text" id="inputNamaWarungBaru" placeholder="misal: Warung Maju Jaya">' +
+        '<button class="aksi" onclick="buatWarungBaru()">Buat warung</button>' +
+        '<div class="pesan" id="pesanWarungBaru"></div>';
+    }
+    wadah.innerHTML = html;
+    tampilkanLayar('layarWarung');
+  }
+
+  function buatWarungBaru(){
+    const nama = document.getElementById('inputNamaWarungBaru').value.trim();
+    if(!nama){
+      tampilPesan('pesanWarungBaru', 'Isi nama warung.', 'error');
+      return;
+    }
+    const uid = auth.currentUser.uid;
+    db.collection('warung').add({
+      namaWarung: nama,
+      dibuatOleh: uid,
+      dibuat: firebase.firestore.FieldValue.serverTimestamp()
+    }).then((ref) => {
+      return db.collection('anggotaWarung').doc(ref.id + '_' + uid).set({
+        warungId: ref.id,
+        userId: uid,
+        nama: profilSekarang ? profilSekarang.nama : '',
+        email: profilSekarang ? profilSekarang.email : '',
+        noWhatsapp: profilSekarang ? (profilSekarang.noWhatsapp || null) : null,
+        role: 'pemilik',
+        aktif: true,
+        bergabung: firebase.firestore.FieldValue.serverTimestamp(),
+        ditambahkanOleh: uid
+      }).then(() => bukaWarungPemilik(ref.id));
+    }).catch((err) => tampilPesan('pesanWarungBaru', terjemahError(err.code), 'error'));
+  }
+
+  function gantiWarung(){
+    if(lepasListenerTransaksi){
+      lepasListenerTransaksi();
+      lepasListenerTransaksi = null;
+    }
+    warungSekarang = null;
+    qrSekarang = null;
+    bukaDashboardSesuaiRole(auth.currentUser.uid, profilSekarang);
+  }
+
+  function bukaWarungPemilik(warungId){
+    ambilWarung(warungId).then((w) => {
+      if(!w) return;
+      warungSekarang = w;
+      document.getElementById('pemberiNama').textContent = profilSekarang.nama;
+      document.getElementById('pemberiWarungNama').textContent = w.namaWarung;
+      tampilkanLayar('layarPemberi');
+      muatDaftarPengutangUntukPemberi();
+      document.getElementById('panelQR').classList.add('tersembunyi');
+      document.getElementById('panelAnggota').classList.add('tersembunyi');
+      muatQR();
+      if(lepasListenerTransaksi) lepasListenerTransaksi();
+      lepasListenerTransaksi = pantauTransaksiPemberi(warungId);
+    });
+  }
+
+  function bukaWarungPengutang(warungId){
+    ambilWarung(warungId).then((w) => {
+      if(!w) return;
+      warungSekarang = w;
+      document.getElementById('pengutangNama').textContent = profilSekarang.nama;
+      document.getElementById('pengutangWarungNama').textContent = w.namaWarung;
+      tampilkanLayar('layarPengutang');
+      if(lepasListenerTransaksi) lepasListenerTransaksi();
+      lepasListenerTransaksi = pantauTransaksiPengutang(warungId, auth.currentUser.uid);
+    });
+  }
+
+  /* =========================
+     QR UNDANGAN WARUNG
+     ========================= */
+
+  function buatQRWarung(){
+    if(!warungSekarang) return;
+    const uid = auth.currentUser.uid;
+    const token = crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+    db.collection('qrWarung').where('warungId', '==', warungSekarang.id).where('aktif', '==', true).get()
+      .then((snap) => {
+        const batch = db.batch();
+        snap.docs.forEach((d) => batch.update(d.ref, { aktif: false, dinonaktifkan: firebase.firestore.FieldValue.serverTimestamp() }));
+        const ref = db.collection('qrWarung').doc();
+        batch.set(ref, {
+          warungId: warungSekarang.id,
+          token: token,
+          aktif: true,
+          dibuat: firebase.firestore.FieldValue.serverTimestamp(),
+          dibuatOleh: uid
+        });
+        return batch.commit().then(() => {
+          qrSekarang = { id: ref.id, warungId: warungSekarang.id, token: token, aktif: true };
+          renderQR();
+          tampilPesan('pesanQR', 'QR baru dibuat. QR lama otomatis dinonaktifkan.', 'sukses');
+        });
+      })
+      .catch((err) => tampilPesan('pesanQR', terjemahError(err.code), 'error'));
+  }
+
+  function muatQR(){
+    db.collection('qrWarung').where('warungId', '==', warungSekarang.id).where('aktif', '==', true).limit(1).get()
+      .then((snap) => {
+        if(!snap.empty){
+          qrSekarang = { id: snap.docs[0].id, ...snap.docs[0].data() };
+          renderQR();
+        } else {
+          document.getElementById('panelQR').classList.add('tersembunyi');
+        }
+      });
+  }
+
+  function renderQR(){
+    const link = location.origin + location.pathname + '?join=' + encodeURIComponent(qrSekarang.token);
+    qrSekarang.link = link;
+    document.getElementById('panelQR').classList.remove('tersembunyi');
+    const canvas = document.getElementById('qrCanvas');
+    canvas.innerHTML = '';
+    new QRCode(canvas, { text: link, width: 200, height: 200 });
+    document.getElementById('qrLink').innerHTML =
+      '<div>Scan QR ini untuk daftar sebagai pengutang di ' + escapeHtml(warungSekarang.namaWarung) + ':</div>' +
+      '<b>' + escapeHtml(link) + '</b>' +
+      '<div style="margin-top:8px">Warung Catat • warung-catat.vercel.app</div>' +
+      '<div>Powered by Amos\'rcpdroid</div>';
+  }
+
+  function salinQRLink(){
+    if(!qrSekarang || !qrSekarang.link) return;
+    if(navigator.clipboard) navigator.clipboard.writeText(qrSekarang.link);
+    tampilPesan('pesanQR', 'Link QR disalin.', 'sukses');
+  }
+
+  function nonaktifkanQR(){
+    if(!qrSekarang) return;
+    if(!confirm('Nonaktifkan QR ini? Pengutang baru tidak dapat mendaftar melalui QR tersebut.')) return;
+    db.collection('qrWarung').doc(qrSekarang.id).update({ aktif: false, dinonaktifkan: firebase.firestore.FieldValue.serverTimestamp() })
+      .then(() => {
+        qrSekarang = null;
+        document.getElementById('panelQR').classList.add('tersembunyi');
+        tampilPesan('pesanQR', 'QR dinonaktifkan.', 'sukses');
+      })
+      .catch((err) => tampilPesan('pesanQR', terjemahError(err.code), 'error'));
+  }
+
+  /* =========================
+     ANGGOTA WARUNG (MULTI-PEMILIK)
+     ========================= */
+
+  function tampilkanAnggota(){
+    if(!warungSekarang) return;
+    db.collection('anggotaWarung').where('warungId', '==', warungSekarang.id).where('aktif', '==', true).get()
+      .then((snap) => {
+        const daftar = snap.docs.map((d) => d.data());
+        document.getElementById('panelAnggota').classList.remove('tersembunyi');
+        document.getElementById('daftarAnggota').innerHTML = daftar.length
+          ? daftar.map((a) => '<div class="anggota-item"><span>' + (a.role === 'pemilik' ? '👑 ' : '👤 ') + escapeHtml(a.nama || '—') + '</span><span class="peran-badge">' + (a.role === 'pemilik' ? 'Pemilik' : 'Pengutang') + '</span></div>').join('')
+          : '<div class="kosong">Belum ada anggota.</div>';
+      });
+  }
+
+  function tambahPemilik(){
+    if(!warungSekarang) return;
+    const email = document.getElementById('emailPemilikBaru').value.trim().toLowerCase();
+    if(!email) return;
+    db.collection('pengguna').where('email', '==', email).limit(1).get()
       .then((snap) => {
         if(snap.empty){
-          select.innerHTML = '<option value="">Belum ada pengutang terdaftar</option>';
+          tampilPesan('pesanQR', 'Akun dengan email tersebut belum ada. Minta orang tersebut daftar sebagai Pemberi utang (pemilik warung) terlebih dahulu.', 'error');
+          return;
+        }
+        const d = snap.docs[0].data();
+        const targetUid = snap.docs[0].id;
+        if(targetUid === auth.currentUser.uid){
+          tampilPesan('pesanQR', 'Anda sudah menjadi pemilik warung ini.', 'error');
+          return;
+        }
+        return db.collection('anggotaWarung').doc(warungSekarang.id + '_' + targetUid).set({
+          warungId: warungSekarang.id,
+          userId: targetUid,
+          nama: d.nama || '',
+          email: d.email || email,
+          noWhatsapp: d.noWhatsapp || null,
+          role: 'pemilik',
+          aktif: true,
+          bergabung: firebase.firestore.FieldValue.serverTimestamp(),
+          ditambahkanOleh: auth.currentUser.uid
+        }, { merge: true }).then(() => {
+          document.getElementById('emailPemilikBaru').value = '';
+          tampilPesan('pesanQR', 'Pemilik berhasil ditambahkan.', 'sukses');
+          tampilkanAnggota();
+        });
+      })
+      .catch((err) => tampilPesan('pesanQR', terjemahError(err.code), 'error'));
+  }
+
+  function muatDaftarPengutangUntukPemberi(){
+    const select = document.getElementById('pemberiPilihPengutang');
+    db.collection('anggotaWarung')
+      .where('warungId', '==', warungSekarang.id)
+      .where('role', '==', 'pengutang')
+      .where('aktif', '==', true)
+      .get()
+      .then((snap) => {
+        if(snap.empty){
+          select.innerHTML = '<option value="">Belum ada pengutang terhubung ke warung ini</option>';
+          petaPengutang = {};
           return;
         }
         select.innerHTML = '<option value="">Pilih pengutang...</option>';
         petaPengutang = {};
         snap.forEach((doc) => {
           const data = doc.data();
-          petaPengutang[doc.id] = { nama: data.nama, telepon: data.noWhatsapp || '' };
+          petaPengutang[data.userId] = { nama: data.nama, telepon: data.noWhatsapp || '' };
           const opt = document.createElement('option');
-          opt.value = doc.id;
+          opt.value = data.userId;
           opt.textContent = data.nama;
           opt.dataset.nama = data.nama;
           select.appendChild(opt);
@@ -583,7 +957,9 @@
     const aksi = editIdSedang
       ? db.collection('transaksi').doc(editIdSedang).update(dataTransaksi)
       : db.collection('transaksi').add(Object.assign({}, dataTransaksi, {
+          warungId: warungSekarang.id,
           dibuatOleh: auth.currentUser.uid,
+          dibuatOlehNama: profilSekarang ? profilSekarang.nama : '',
           tanggal: new Date().toISOString().slice(0,10),
           jam: new Date().toTimeString().slice(0,5),
           waktu: firebase.firestore.FieldValue.serverTimestamp()
@@ -675,9 +1051,15 @@
     pdf.setFont('helvetica','bold');
     pdf.setFontSize(20);
     pdf.text('WARUNG CATAT', margin, y);
-    y += 8;
+    y += 7;
 
     pdf.setFont('helvetica','normal');
+    pdf.setFontSize(10);
+    pdf.text((warungSekarang ? warungSekarang.namaWarung : '-') + ' • warung-catat.vercel.app', margin, y);
+    y += 6;
+    pdf.text("Powered by Amos'rcpdroid", margin, y);
+    y += 8;
+
     pdf.setFontSize(10);
     pdf.text('Rincian transaksi / catatan utang', margin, y);
     y += 10;
@@ -734,7 +1116,7 @@
 
     pdf.setFont('helvetica','normal');
     pdf.setFontSize(8);
-    pdf.text('Dibuat oleh Warung Catat', margin, 275);
+    pdf.text("Warung Catat • warung-catat.vercel.app • Powered by Amos'rcpdroid", margin, 280);
 
     const filename =
       'Warung-Catat-' +
@@ -772,10 +1154,14 @@
     pdf.setFont('helvetica','bold');
     pdf.setFontSize(19);
     pdf.text('WARUNG CATAT', margin, y);
-    y += 7;
+    y += 6;
 
     pdf.setFont('helvetica','normal');
     pdf.setFontSize(10);
+    pdf.text((warungSekarang ? warungSekarang.namaWarung : '-') + ' • warung-catat.vercel.app', margin, y);
+    y += 5;
+    pdf.text("Powered by Amos'rcpdroid", margin, y);
+    y += 7;
     pdf.text('Rincian seluruh utang yang belum lunas', margin, y);
     y += 8;
 
@@ -831,7 +1217,7 @@
 
     pdf.setFont('helvetica','normal');
     pdf.setFontSize(8);
-    pdf.text('Dokumen dibuat oleh Warung Catat.', margin, 280);
+    pdf.text("Warung Catat • warung-catat.vercel.app • Powered by Amos'rcpdroid", margin, 280);
 
     const filename = 'Warung-Catat-Utang-' + namaFileAman(nama) + '.pdf';
     pdf.save(filename);
@@ -854,13 +1240,15 @@
     const nomor = formatNomorWA((petaPengutang[d.pengutangId] || {}).telepon);
 
     const pesan =
-      '*Warung Catat - Rincian Utang*\\n' +
+      '*' + (warungSekarang ? warungSekarang.namaWarung : 'Warung Catat') + '*\\n' +
+      '*Rincian Utang*\\n' +
       'Nama: ' + d.pengutangNama + '\\n' +
       'Tanggal: ' + formatTanggalPDF(d.tanggal) + ' ' + (d.jam || '') + '\\n' +
       'Pesanan: ' + (d.itemPesanan || ((d.jumlahPesanan || 0) + ' pesanan')) + '\\n' +
       'Total: ' + formatRupiah(d.harga) + '\\n' +
       'Status: *BELUM LUNAS*\\n\\n' +
-      'PDF rincian transaksi sudah dibuat. Silakan lampirkan file PDF yang baru diunduh ke chat ini.';
+      'PDF rincian transaksi sudah dibuat. Silakan lampirkan file PDF yang baru diunduh ke chat ini.\\n\\n' +
+      'Warung Catat\\nwarung-catat.vercel.app\\nPowered by Amos\'rcpdroid';
 
     const url = 'https://wa.me/' + nomor + '?text=' + encodeURIComponent(pesan);
     window.open(url, '_blank');
@@ -883,11 +1271,13 @@
     const nomor = formatNomorWA((petaPengutang[pengutangId] || {}).telepon);
 
     const pesan =
-      '*Warung Catat - Rekap Utang*\\n' +
+      '*' + (warungSekarang ? warungSekarang.namaWarung : 'Warung Catat') + '*\\n' +
+      '*Rekap Utang*\\n' +
       'Nama: ' + nama + '\\n' +
       'Jumlah transaksi belum lunas: ' + list.length + '\\n' +
       'Total utang: ' + formatRupiah(hasil.total) + '\\n\\n' +
-      'PDF rekap seluruh utang sudah dibuat. Silakan lampirkan file PDF yang baru diunduh ke chat ini.';
+      'PDF rekap seluruh utang sudah dibuat. Silakan lampirkan file PDF yang baru diunduh ke chat ini.\\n\\n' +
+      'Warung Catat\\nwarung-catat.vercel.app\\nPowered by Amos\'rcpdroid';
 
     const url = 'https://wa.me/' + nomor + '?text=' + encodeURIComponent(pesan);
     window.open(url, '_blank');
@@ -897,22 +1287,24 @@
     const d = transaksiPemberiCache.find(t => t.id === id);
     if(!d) return;
     const rincianItem = d.itemPesanan ? d.itemPesanan : (d.jumlahPesanan + ' pesanan');
-    const pesan = '*Warung Catat - Bukti Pembayaran*\n'
+    const pesan = '*' + (warungSekarang ? warungSekarang.namaWarung : 'Warung Catat') + '*\n'
+      + '*Bukti Pembayaran*\n'
       + 'Nama: ' + d.pengutangNama + '\n'
       + 'Tanggal: ' + d.tanggal + ' ' + d.jam + '\n'
       + 'Pesanan: ' + rincianItem + '\n'
       + 'Total: ' + formatRupiah(d.harga) + '\n'
-      + 'Status: LUNAS ✅';
+      + 'Status: LUNAS ✅\n\n'
+      + 'Warung Catat\nwarung-catat.vercel.app\nPowered by Amos\'rcpdroid';
     const nomor = formatNomorWA((petaPengutang[d.pengutangId] || {}).telepon);
     const url = 'https://wa.me/' + nomor + '?text=' + encodeURIComponent(pesan);
     window.open(url, '_blank');
   }
 
-  function pantauTransaksiPemberi(uid){
+  function pantauTransaksiPemberi(warungId){
     const daftarEl = document.getElementById('pemberiDaftar');
 
     return db.collection('transaksi')
-      .where('dibuatOleh', '==', uid)
+      .where('warungId', '==', warungId)
       .orderBy('waktu', 'desc')
       .onSnapshot((snap) => {
         const list = [];
@@ -928,6 +1320,7 @@
                 <div class="nama-pengutang">${escapeHtml(d.pengutangNama)}</div>
                 ${d.itemPesanan ? `<div class="item-pesan">${escapeHtml(d.itemPesanan)}</div>` : ''}
                 <div class="rincian">${d.jumlahPesanan} pesanan · ${d.tanggal} ${d.jam}</div>
+                <div class="rincian">Dicatat oleh: ${escapeHtml(d.dibuatOlehNama || 'Pemilik')}</div>
               </div>
               <div class="kanan">
                 <div class="harga">${formatRupiah(d.harga)}</div>
@@ -993,11 +1386,12 @@
       </div>`).join('');
   }
 
-  function pantauTransaksiPengutang(uid){
+  function pantauTransaksiPengutang(warungId, uid){
     const daftarEl = document.getElementById('pengutangDaftar');
     const totalEl = document.getElementById('pengutangTotalUtang');
 
     return db.collection('transaksi')
+      .where('warungId', '==', warungId)
       .where('pengutangId', '==', uid)
       .orderBy('waktu', 'desc')
       .onSnapshot((snap) => {
@@ -1046,17 +1440,8 @@
             tampilkanLayar('layarAuth');
             return;
           }
-          const data = doc.data();
-          if(data.role === 'pemberi'){
-            document.getElementById('pemberiNama').textContent = data.nama;
-            tampilkanLayar('layarPemberi');
-            muatDaftarPengutangUntukPemberi();
-            lepasListenerTransaksi = pantauTransaksiPemberi(user.uid);
-          } else {
-            document.getElementById('pengutangNama').textContent = data.nama;
-            tampilkanLayar('layarPengutang');
-            lepasListenerTransaksi = pantauTransaksiPengutang(user.uid);
-          }
+          profilSekarang = doc.data();
+          return gabungDariQR(user.uid).then(() => bukaDashboardSesuaiRole(user.uid, profilSekarang));
         })
         .catch((err) => {
           tampilPesan('pesanMasuk', terjemahError(err.code), 'error');
@@ -1064,6 +1449,12 @@
         });
     } else {
       tampilkanLayar('layarAuth');
+      if(joinToken){
+        document.getElementById('infoQR').className = 'pesan sukses';
+        document.getElementById('infoQR').textContent = 'Anda masuk melalui QR warung. Daftar sebagai Pengutang untuk terhubung otomatis, lalu masuk.';
+        pilihRole('pengutang');
+        gantiTab('daftar');
+      }
     }
   });
 
