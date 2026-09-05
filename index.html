@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Warung Catat</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3E5C3A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Warung Catat">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <style>
   :root{
     --nasi: #F6EFE2;
@@ -225,7 +234,7 @@
     font-size:13.5px; color:#8a8171;
   }
 
-  .warung-panel{margin:12px 0;padding:12px;background:#fffdf8;border:1px solid var(--garis);border-radius:4px}.warung-panel h3{margin:0 0 8px;color:var(--daun-tua);font-size:15px}.warung-panel small{color:#8a8171}.warung-panel .qrbox{display:flex;flex-direction:column;align-items:center;gap:7px;margin-top:10px}.warung-panel .qrbox canvas,.warung-panel .qrbox img{background:#fff;padding:8px;max-width:210px}.warung-members{margin-top:10px}.member-row{display:flex;justify-content:space-between;border-bottom:1px solid #eee4d0;padding:6px 0;font-size:12px}.warung-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.warung-actions .btn-mini{flex:1}.qr-url{font-size:10px;word-break:break-all;text-align:center;color:#6b6357}.brand-foot{text-align:center;font-size:10px;color:#8a8171;margin:16px 0}
+  .warung-panel{margin:12px 0;padding:12px;background:#fffdf8;border:1px solid var(--garis);border-radius:4px}.warung-panel h3{margin:0 0 8px;color:var(--daun-tua);font-size:15px}.warung-panel small{color:#8a8171}.warung-panel .qrbox{display:flex;flex-direction:column;align-items:center;gap:7px;margin-top:10px}.warung-panel .qrbox canvas,.warung-panel .qrbox img{background:#fff;padding:8px;max-width:210px}.warung-members{margin-top:10px}.member-row{display:flex;justify-content:space-between;border-bottom:1px solid #eee4d0;padding:6px 0;font-size:12px}.warung-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.warung-actions .btn-mini{flex:1}.qr-url{font-size:10px;word-break:break-all;text-align:center;color:#6b6357}.brand-foot{text-align:center;font-size:10px;color:#8a8171;margin:16px 0}.brand-mini{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 10px;border:1px solid var(--garis);border-radius:20px;background:#FCFAF5}.brand-mini svg{flex-shrink:0}.brand-mini span{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:10.5px;color:#8a8171}
 </style>
 </head>
 <body>
@@ -289,6 +298,7 @@
       </div>
       <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
     </div>
+    <div class="brand-mini"><svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="7" fill="#3E5C3A"/><text x="7" y="10" font-family="Georgia, serif" font-size="8" fill="#F6EFE2" text-anchor="middle">W</text></svg><span>Powered by Amos'rcpdroid</span></div>
 
     <div id="pilihWarungBoxP" class="warung-panel tersembunyi">
       <label style="margin:0 0 6px">Warung aktif</label>
@@ -367,6 +377,7 @@
       </div>
       <button class="aksi sekunder kecil" onclick="keluar()">Keluar</button>
     </div>
+    <div class="brand-mini"><svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="7" fill="#3E5C3A"/><text x="7" y="10" font-family="Georgia, serif" font-size="8" fill="#F6EFE2" text-anchor="middle">W</text></svg><span>Powered by Amos'rcpdroid</span></div>
 
     <div id="pilihWarungBoxU" class="warung-panel tersembunyi">
       <label style="margin:0 0 6px">Warung aktif</label>
@@ -1202,6 +1213,14 @@
       'permission-denied': 'Tidak punya izin akses data. Periksa aturan keamanan Firestore.'
     };
     return peta[kode] || 'Terjadi kesalahan. Coba lagi.';
+  }
+
+  // Registrasi PWA. Kalau file sw.js belum diupload ke server,
+  // ini gagal senyap dan tidak mengganggu jalannya aplikasi.
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch((e) => console.warn('Service worker gagal didaftarkan:', e.message));
+    });
   }
 </script>
 <div class="brand-foot">Warung Catat · warung-catat.vercel.app · Powered by Amos'rcpdroid</div>
